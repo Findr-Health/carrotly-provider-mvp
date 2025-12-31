@@ -148,8 +148,16 @@ export const ProfilePreview: React.FC = () => {
           </div>
         </div>
 
+        {/* About Section */}
+        {provider.description && (
+          <div className="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-3">About Us</h2>
+            <p className="text-gray-700 whitespace-pre-line">{provider.description}</p>
+          </div>
+        )}
+
         {/* Contact & Location Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           {/* Location Card */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
@@ -186,7 +194,6 @@ export const ProfilePreview: React.FC = () => {
               {(provider.contactInfo?.website || provider.website) && (
                 <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-3 text-gray-400" />
-                  <a
                   
                     href={provider.contactInfo?.website || provider.website}
                     target="_blank"
@@ -198,6 +205,37 @@ export const ProfilePreview: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Hours Card */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center">
+              <Clock className="w-5 h-5 mr-2 text-teal-600" />
+              Hours
+            </h2>
+            {provider.calendar?.businessHours ? (
+              <div className="space-y-2 text-sm">
+                {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const).map((day) => {
+                  const hours = provider.calendar?.businessHours?.[day];
+                  const formatTime = (time: string) => {
+                    const [h, m] = time.split(':').map(Number);
+                    const period = h >= 12 ? 'PM' : 'AM';
+                    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+                    return `${hour12}:${m.toString().padStart(2, '0')} ${period}`;
+                  };
+                  return (
+                    <div key={day} className="flex justify-between">
+                      <span className="text-gray-600 capitalize">{day}</span>
+                      <span className={hours?.enabled ? 'text-gray-900 font-medium' : 'text-gray-400'}>
+                        {hours?.enabled ? `${formatTime(hours.start)} - ${formatTime(hours.end)}` : 'Closed'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">Hours not set</p>
+            )}
           </div>
         </div>
 
