@@ -140,6 +140,17 @@ export default function CompleteProfile() {
   const [zip, setZip] = useState('');
   const [website, setWebsite] = useState('');
 
+  const [description, setDescription] = useState('');
+  const [businessHours, setBusinessHours] = useState({
+    monday: { enabled: true, start: '09:00', end: '17:00' },
+    tuesday: { enabled: true, start: '09:00', end: '17:00' },
+    wednesday: { enabled: true, start: '09:00', end: '17:00' },
+    thursday: { enabled: true, start: '09:00', end: '17:00' },
+    friday: { enabled: true, start: '09:00', end: '17:00' },
+    saturday: { enabled: false, start: '09:00', end: '17:00' },
+    sunday: { enabled: false, start: '09:00', end: '17:00' },
+  });
+
   const [photos, setPhotos] = useState<string[]>([]);
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -495,11 +506,15 @@ export default function CompleteProfile() {
     const profileData = {
       placeId: businessData.placeId,
       practiceName,
+      description,  // ADD THIS
       providerTypes: selectedTypes,
       phone,
       email,
       address: { street, suite, city, state, zip },
       website,
+      calendar: {  // ADD THIS
+        businessHours
+      },
       photos,
       services: servicesData,
       optionalInfo: {
@@ -647,7 +662,18 @@ export default function CompleteProfile() {
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                   </div>
-                </div>
+                  <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  About Your Practice
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Tell patients about your practice, specialties, and approach to care..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+                <p className="text-sm text-gray-500 mt-1">This appears on your public profile.</p>
               </div>
             </div>
 
@@ -741,6 +767,74 @@ export default function CompleteProfile() {
                     placeholder="https://yourpractice.com"
                   />
                 </div>
+                {/* Business Hours */}
+              <div className="border-t border-gray-200 pt-6 mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Business Hours
+                </label>
+                <div className="space-y-3">
+                  {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const).map((day) => (
+                    <div key={day} className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 w-28">
+                        <input
+                          type="checkbox"
+                          checked={businessHours[day].enabled}
+                          onChange={(e) => setBusinessHours(prev => ({
+                            ...prev,
+                            [day]: { ...prev[day], enabled: e.target.checked }
+                          }))}
+                          className="h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
+                        />
+                        <span className="text-sm font-medium text-gray-700 capitalize">{day}</span>
+                      </label>
+                      
+                      {businessHours[day].enabled ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <select
+                            value={businessHours[day].start}
+                            onChange={(e) => setBusinessHours(prev => ({
+                              ...prev,
+                              [day]: { ...prev[day], start: e.target.value }
+                            }))}
+                            className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500"
+                          >
+                            {Array.from({ length: 24 }, (_, i) => {
+                              const hour = i.toString().padStart(2, '0');
+                              return (
+                                <React.Fragment key={hour}>
+                                  <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
+                                  <option value={`${hour}:30`}>{i === 0 ? '12:30 AM' : i < 12 ? `${i}:30 AM` : i === 12 ? '12:30 PM' : `${i - 12}:30 PM`}</option>
+                                </React.Fragment>
+                              );
+                            })}
+                          </select>
+                          <span className="text-gray-500 text-sm">to</span>
+                          <select
+                            value={businessHours[day].end}
+                            onChange={(e) => setBusinessHours(prev => ({
+                              ...prev,
+                              [day]: { ...prev[day], end: e.target.value }
+                            }))}
+                            className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500"
+                          >
+                            {Array.from({ length: 24 }, (_, i) => {
+                              const hour = i.toString().padStart(2, '0');
+                              return (
+                                <React.Fragment key={hour}>
+                                  <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
+                                  <option value={`${hour}:30`}>{i === 0 ? '12:30 AM' : i < 12 ? `${i}:30 AM` : i === 12 ? '12:30 PM' : `${i - 12}:30 PM`}</option>
+                                </React.Fragment>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-400 italic">Closed</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
               </div>
             </div>
 
