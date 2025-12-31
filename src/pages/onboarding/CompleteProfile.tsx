@@ -835,9 +835,7 @@ export default function CompleteProfile() {
                   ))}
                 </div>
               </div>
-              </div>
             </div>
-
             {/* SECTION 3: PHOTOS */}
             <div className="pb-8 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">3. Photos *</h2>
