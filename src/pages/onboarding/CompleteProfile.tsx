@@ -802,7 +802,7 @@ export default function CompleteProfile() {
                               const hour = i.toString().padStart(2, '0');
                               return (
                                 <React.Fragment key={hour}>
-                                  <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
+                                  <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
                                   <option value={`${hour}:30`}>{i === 0 ? '12:30 AM' : i < 12 ? `${i}:30 AM` : i === 12 ? '12:30 PM' : `${i - 12}:30 PM`}</option>
                                 </React.Fragment>
                               );
@@ -836,6 +836,7 @@ export default function CompleteProfile() {
                 </div>
               </div>
             </div>
+          </div>
             {/* SECTION 3: PHOTOS */}
             <div className="pb-8 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">3. Photos *</h2>
