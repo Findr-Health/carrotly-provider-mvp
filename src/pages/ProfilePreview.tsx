@@ -176,7 +176,7 @@ export const ProfilePreview: React.FC = () => {
             </button>
           </div>
           
-          {/* Contact Card */}
+           {/* Contact Card */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <Phone className="w-5 h-5 mr-2 text-teal-600" />
@@ -194,7 +194,7 @@ export const ProfilePreview: React.FC = () => {
               {(provider.contactInfo?.website || provider.website) && (
                 <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-3 text-gray-400" />
-                  
+                  <a
                     href={provider.contactInfo?.website || provider.website}
                     target="_blank"
                     rel="noopener noreferrer"
