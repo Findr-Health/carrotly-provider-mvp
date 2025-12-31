@@ -662,18 +662,21 @@ export default function CompleteProfile() {
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                   </div>
-                  <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  About Your Practice
-                </label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  placeholder="Tell patients about your practice, specialties, and approach to care..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
-                <p className="text-sm text-gray-500 mt-1">This appears on your public profile.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    About Your Practice
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    placeholder="Tell patients about your practice, specialties, and approach to care..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">This appears on your public profile.</p>
+                </div>
               </div>
             </div>
 
