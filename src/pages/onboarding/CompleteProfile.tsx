@@ -14,13 +14,16 @@ const US_STATES = [
 ];
 
 const providerTypes = [
-  { id: 'medical', label: 'Medical', icon: '🏥' },
-  { id: 'dental', label: 'Dental', icon: '🦷' },
-  { id: 'cosmetic', label: 'Cosmetic', icon: '✨' },
-  { id: 'fitness', label: 'Fitness', icon: '💪' },
-  { id: 'massage', label: 'Massage', icon: '💆' },
-  { id: 'mentalHealth', label: 'Mental Health', icon: '🧠' },
-  { id: 'skincare', label: 'Skincare', icon: '🧴' },
+  { id: 'Medical', label: 'Medical', icon: '🏥' },
+  { id: 'Urgent Care', label: 'Urgent Care', icon: '🚑' },
+  { id: 'Dental', label: 'Dental', icon: '🦷' },
+  { id: 'Mental Health', label: 'Mental Health', icon: '🧠' },
+  { id: 'Skincare/Aesthetics', label: 'Skincare/Aesthetics', icon: '✨' },
+  { id: 'Massage/Bodywork', label: 'Massage/Bodywork', icon: '💆' },
+  { id: 'Fitness/Training', label: 'Fitness/Training', icon: '💪' },
+  { id: 'Yoga/Pilates', label: 'Yoga/Pilates', icon: '🧘' },
+  { id: 'Nutrition/Wellness', label: 'Nutrition/Wellness', icon: '🥗' },
+  { id: 'Pharmacy/RX', label: 'Pharmacy/RX', icon: '💊' },
 ];
 
 interface Service {
@@ -38,27 +41,86 @@ interface TeamMember {
   title: string;
   bio: string;
 }
-
 const allServices: Record<string, Service[]> = {
-  medical: [
-    { id: 'annual-physical', name: 'Annual Physical Exam', category: 'Preventive', duration: 45, price: 150 },
-    { id: 'wellness-checkup', name: 'Wellness Checkup', category: 'Preventive', duration: 30, price: 125 },
-    { id: 'sick-visit', name: 'Sick Visit', category: 'Acute Care', duration: 20, price: 100 },
-    { id: 'flu-vax', name: 'Flu Vaccination', category: 'Vaccinations', duration: 15, price: 40 },
-    { id: 'covid-vax', name: 'COVID-19 Vaccination', category: 'Vaccinations', duration: 15, price: 50 },
+  'Medical': [
+    { id: 'med-annual-physical', name: 'Annual Physical Exam', category: 'Preventive', duration: 45, price: 150 },
+    { id: 'med-wellness-checkup', name: 'Wellness Checkup', category: 'Preventive', duration: 30, price: 125 },
+    { id: 'med-sick-visit', name: 'Sick Visit', category: 'Acute Care', duration: 20, price: 100 },
+    { id: 'med-diabetes', name: 'Diabetes Management', category: 'Chronic Care', duration: 30, price: 125 },
+    { id: 'med-flu-vax', name: 'Flu Vaccination', category: 'Vaccinations', duration: 15, price: 40 },
+    { id: 'med-telehealth', name: 'Telehealth Consultation', category: 'Virtual', duration: 20, price: 75 },
   ],
-  dental: [
-    { id: 'dental-cleaning', name: 'Dental Cleaning', category: 'Preventive', duration: 60, price: 120 },
-    { id: 'filling', name: 'Filling', category: 'Restorative', duration: 60, price: 200 },
-    { id: 'crown', name: 'Crown', category: 'Restorative', duration: 120, price: 1200 },
+  'Urgent Care': [
+    { id: 'uc-basic-visit', name: 'Basic Urgent Care Visit', category: 'Urgent Care', duration: 30, price: 75 },
+    { id: 'uc-comprehensive', name: 'Comprehensive Visit', category: 'Urgent Care', duration: 45, price: 150 },
+    { id: 'uc-laceration', name: 'Laceration Repair', category: 'Minor Procedures', duration: 30, price: 200 },
+    { id: 'uc-xray', name: 'X-Ray', category: 'Diagnostic', duration: 20, price: 100 },
+    { id: 'uc-strep', name: 'Strep Test', category: 'Testing', duration: 15, price: 35 },
+    { id: 'uc-iv-hydration', name: 'IV Hydration Therapy', category: 'IV Therapy', duration: 45, price: 150 },
   ],
-  cosmetic: [
-    { id: 'botox', name: 'Botox Injection', category: 'Injectables', duration: 30, price: 400 },
-    { id: 'facial', name: 'Facial Treatment', category: 'Skin', duration: 60, price: 150 },
+  'Dental': [
+    { id: 'dent-cleaning', name: 'Dental Cleaning', category: 'Preventive', duration: 60, price: 120 },
+    { id: 'dent-exam-xray', name: 'Exam & X-rays', category: 'Preventive', duration: 45, price: 150 },
+    { id: 'dent-filling', name: 'Filling', category: 'Restorative', duration: 60, price: 200 },
+    { id: 'dent-crown', name: 'Crown', category: 'Restorative', duration: 120, price: 1200 },
+    { id: 'dent-whitening', name: 'Teeth Whitening', category: 'Cosmetic', duration: 60, price: 400 },
+    { id: 'dent-emergency', name: 'Emergency Dental Exam', category: 'Emergency', duration: 30, price: 150 },
   ],
-  fitness: [
-    { id: 'personal-training', name: 'Personal Training Session', category: 'Training', duration: 60, price: 100 },
-    { id: 'nutrition', name: 'Nutrition Consultation', category: 'Nutrition', duration: 45, price: 75 },
+  'Mental Health': [
+    { id: 'mh-initial', name: 'Initial Evaluation', category: 'Evaluation', duration: 60, price: 250 },
+    { id: 'mh-therapy-60', name: 'Individual Therapy (60 min)', category: 'Therapy', duration: 60, price: 150 },
+    { id: 'mh-therapy-45', name: 'Individual Therapy (45 min)', category: 'Therapy', duration: 45, price: 125 },
+    { id: 'mh-couples', name: 'Couples Therapy', category: 'Therapy', duration: 60, price: 175 },
+    { id: 'mh-med-mgmt', name: 'Medication Management', category: 'Psychiatry', duration: 30, price: 150 },
+    { id: 'mh-telehealth', name: 'Telehealth Session', category: 'Virtual', duration: 50, price: 140 },
+  ],
+  'Skincare/Aesthetics': [
+    { id: 'skin-facial', name: 'Classic Facial', category: 'Facials', duration: 60, price: 120 },
+    { id: 'skin-hydrafacial', name: 'HydraFacial', category: 'Facials', duration: 60, price: 200 },
+    { id: 'skin-botox', name: 'Botox (per area)', category: 'Injectables', duration: 30, price: 350 },
+    { id: 'skin-filler', name: 'Dermal Filler', category: 'Injectables', duration: 45, price: 650 },
+    { id: 'skin-laser-hair', name: 'Laser Hair Removal', category: 'Laser', duration: 30, price: 200 },
+    { id: 'skin-consultation', name: 'Skin Consultation', category: 'Consultation', duration: 30, price: 75 },
+  ],
+  'Massage/Bodywork': [
+    { id: 'mass-swedish-60', name: 'Swedish Massage (60 min)', category: 'Massage', duration: 60, price: 90 },
+    { id: 'mass-deep-60', name: 'Deep Tissue Massage (60 min)', category: 'Massage', duration: 60, price: 110 },
+    { id: 'mass-sports', name: 'Sports Massage', category: 'Massage', duration: 60, price: 110 },
+    { id: 'mass-hot-stone', name: 'Hot Stone Massage', category: 'Massage', duration: 75, price: 130 },
+    { id: 'chiro-adjust', name: 'Chiropractic Adjustment', category: 'Chiropractic', duration: 30, price: 75 },
+    { id: 'pt-session', name: 'Physical Therapy Session', category: 'Physical Therapy', duration: 45, price: 125 },
+  ],
+  'Fitness/Training': [
+    { id: 'fit-pt-single', name: 'Personal Training Session', category: 'Personal Training', duration: 60, price: 80 },
+    { id: 'fit-assessment', name: 'Fitness Assessment', category: 'Assessment', duration: 60, price: 100 },
+    { id: 'fit-nutrition', name: 'Nutrition Consultation', category: 'Coaching', duration: 45, price: 75 },
+    { id: 'fit-group', name: 'Small Group Training', category: 'Group', duration: 60, price: 35 },
+    { id: 'fit-bootcamp', name: 'Bootcamp Class', category: 'Group', duration: 45, price: 25 },
+    { id: 'fit-virtual', name: 'Virtual Training Session', category: 'Virtual', duration: 45, price: 60 },
+  ],
+  'Yoga/Pilates': [
+    { id: 'yoga-drop-in', name: 'Yoga Class (Drop-in)', category: 'Yoga', duration: 60, price: 20 },
+    { id: 'yoga-private', name: 'Private Yoga Session', category: 'Yoga', duration: 60, price: 100 },
+    { id: 'yoga-hot', name: 'Hot Yoga Class', category: 'Yoga', duration: 75, price: 25 },
+    { id: 'pilates-mat', name: 'Pilates Mat Class', category: 'Pilates', duration: 55, price: 25 },
+    { id: 'pilates-reformer', name: 'Pilates Reformer Class', category: 'Pilates', duration: 55, price: 40 },
+    { id: 'meditation', name: 'Guided Meditation', category: 'Mindfulness', duration: 30, price: 15 },
+  ],
+  'Nutrition/Wellness': [
+    { id: 'nutr-initial', name: 'Initial Nutrition Consultation', category: 'Nutrition', duration: 60, price: 150 },
+    { id: 'nutr-followup', name: 'Nutrition Follow-up', category: 'Nutrition', duration: 30, price: 75 },
+    { id: 'nutr-meal-plan', name: 'Custom Meal Plan', category: 'Nutrition', duration: 45, price: 125 },
+    { id: 'well-health-coach', name: 'Health Coaching Session', category: 'Wellness', duration: 60, price: 100 },
+    { id: 'well-weight', name: 'Weight Management Session', category: 'Wellness', duration: 45, price: 85 },
+    { id: 'well-functional', name: 'Functional Medicine Consult', category: 'Holistic', duration: 60, price: 200 },
+  ],
+  'Pharmacy/RX': [
+    { id: 'rx-consult', name: 'Pharmacist Consultation', category: 'Consultation', duration: 15, price: 25 },
+    { id: 'rx-med-review', name: 'Medication Review', category: 'Consultation', duration: 30, price: 50 },
+    { id: 'rx-immunization', name: 'Immunization', category: 'Immunizations', duration: 15, price: 35 },
+    { id: 'rx-flu-shot', name: 'Flu Shot', category: 'Immunizations', duration: 10, price: 40 },
+    { id: 'rx-bp-check', name: 'Blood Pressure Check', category: 'Screenings', duration: 10, price: 0 },
+    { id: 'rx-compound', name: 'Custom Compounding', category: 'Compounding', duration: 30, price: 50 },
   ],
 };
 
@@ -84,9 +146,17 @@ export default function CompleteProfile() {
   const [customizedServices, setCustomizedServices] = useState<Record<string, { price: number; duration: number }>>({});
   const [editingService, setEditingService] = useState<string | null>(null);
   const [editPrice, setEditPrice] = useState('');
+  const [editDescription, setEditDescription] = useState('');
   const [editDuration, setEditDuration] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
+  const [showAddCustomService, setShowAddCustomService] = useState(false);
+  const [customServiceName, setCustomServiceName] = useState('');
+  const [customServiceDuration, setCustomServiceDuration] = useState('');
+  const [customServiceDescription, setCustomServiceDescription] = useState('');
+  const [customServicePrice, setCustomServicePrice] = useState('');
+  const [customServices, setCustomServices] = useState<Service[]>([]);
   const [licenseNumber, setLicenseNumber] = useState('');
   const [licenseState, setLicenseState] = useState('');
   const [yearsExperience, setYearsExperience] = useState('');
@@ -98,8 +168,18 @@ export default function CompleteProfile() {
   const [newMemberName, setNewMemberName] = useState('');
   const [newMemberTitle, setNewMemberTitle] = useState('');
   const [newMemberBio, setNewMemberBio] = useState('');
+  const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [editMemberName, setEditMemberName] = useState('');
+  const [editMemberTitle, setEditMemberTitle] = useState('');
+  const [editMemberBio, setEditMemberBio] = useState('');
+  const [editMemberPhoto, setEditMemberPhoto] = useState('');
+  const [cancellationPolicy, setCancellationPolicy] = useState<'standard' | 'moderate'>('standard');
+  const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
 
   const [signature, setSignature] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
 
@@ -204,7 +284,37 @@ export default function CompleteProfile() {
   };
 
   const removeTeamMember = (id: string) => {
-    setTeamMembers(prev => prev.filter(m => m.id !== id));
+      setTeamMembers(prev => prev.filter(m => m.id !== id));
+  };
+
+  const startEditMember = (member: TeamMember) => {
+    setEditingMemberId(member.id);
+    setEditMemberName(member.name);
+    setEditMemberTitle(member.title);
+    setEditMemberBio(member.bio);
+    setEditMemberPhoto(member.photo);
+  };
+
+  const saveEditMember = () => {
+    if (!editingMemberId || !editMemberName.trim()) return;
+    setTeamMembers(prev => prev.map(m =>
+      m.id === editingMemberId
+        ? { ...m, name: editMemberName, title: editMemberTitle, bio: editMemberBio, photo: editMemberPhoto }
+        : m
+    ));
+    setEditingMemberId(null);
+    setEditMemberName('');
+    setEditMemberTitle('');
+    setEditMemberBio('');
+    setEditMemberPhoto('');
+  };
+
+  const cancelEditMember = () => {
+    setEditingMemberId(null);
+    setEditMemberName('');
+    setEditMemberTitle('');
+    setEditMemberBio('');
+    setEditMemberPhoto('');
   };
 
   const cancelAddMember = () => {
@@ -225,14 +335,62 @@ export default function CompleteProfile() {
     return selectedTypes.flatMap(type => allServices[type] || []);
   };
 
+  // Get all services from all provider types
+  const getAllServices = () => {
+    const allServicesList: Service[] = [];
+    Object.values(allServices).forEach(services => {
+      services.forEach(service => {
+        if (!allServicesList.find(s => s.id === service.id)) {
+          allServicesList.push(service);
+        }
+      });
+    });
+    return allServicesList;
+  };
+
+  // Get unique categories from all services
+  const serviceCategories = Array.from(
+    new Set(getAllServices().map(s => s.category))
+  ).sort();
+
+  const addCustomService = () => {
+    if (!customServiceName.trim() || !customServiceDuration || !customServicePrice) {
+      alert('Please fill in service name, duration, and price');
+      return;
+    }
+    if (activeCategory === 'all') {
+      alert('Please select a category first');
+      return;
+    }
+    const newService: Service = {
+      id: `custom-${Date.now()}`,
+      name: customServiceName.trim(),
+      description: customServiceDescription.trim(),
+      category: activeCategory,
+      duration: parseInt(customServiceDuration),
+      price: parseFloat(customServicePrice)
+    };
+    setCustomServices(prev => [...prev, newService]);
+    setSelectedServices(prev => [...prev, newService.id]);
+    setCustomServiceName('');
+    setCustomServiceDuration('');
+    setCustomServicePrice('');    setCustomServiceDescription('');
+    setShowAddCustomService(false);
+  };
+
+  const getAllServicesWithCustom = () => {
+    return [...getAllServices(), ...customServices];
+  };
+
   const startEdit = (serviceId: string) => {
-    const service = getAvailableServices().find(s => s.id === serviceId);
+    const service = getAllServicesWithCustom().find(s => s.id === serviceId);
     const customized = customizedServices[serviceId];
     
     if (service) {
       setEditingService(serviceId);
       setEditPrice((customized?.price || service.price).toString());
       setEditDuration((customized?.duration || service.duration).toString());
+      setEditDescription(customized?.description || service.description || '');
     }
   };
 
@@ -254,7 +412,7 @@ export default function CompleteProfile() {
     
     setCustomizedServices(prev => ({
       ...prev,
-      [editingService]: { price, duration }
+      [editingService]: { price, duration, description: editDescription }
     }));
     
     setEditingService(null);
@@ -262,8 +420,20 @@ export default function CompleteProfile() {
 
   const cancelEdit = () => {
     setEditingService(null);
-    setEditPrice('');
     setEditDuration('');
+    setEditPrice('');
+  };
+
+  const deleteService = (serviceId: string) => {
+    if (!confirm('Are you sure you want to remove this service?')) return;
+    setSelectedServices(prev => prev.filter(id => id !== serviceId));
+    setCustomServices(prev => prev.filter(s => s.id !== serviceId));
+    setCustomizedServices(prev => {
+      const newCustomized = { ...prev };
+      delete newCustomized[serviceId];
+      return newCustomized;
+    });
+    setEditingService(null);
   };
 
   const getServiceDetails = (service: Service) => {
@@ -271,6 +441,7 @@ export default function CompleteProfile() {
     return {
       price: customized?.price || service.price,
       duration: customized?.duration || service.duration,
+      description: customized?.description || service.description || '',
       isCustomized: !!customized
     };
   };
@@ -289,9 +460,12 @@ export default function CompleteProfile() {
   if (!state) newErrors.state = 'Required';
   if (!zip.trim()) newErrors.zip = 'Required';
   if (photos.length === 0) newErrors.photos = 'Upload at least 1 photo';
-  if (selectedServices.length < 2) newErrors.services = 'Select at least 2 services';
+  
   if (!signature.trim()) newErrors.signature = 'Signature required';
   if (!agreedToTerms) newErrors.terms = 'Must agree to terms';
+  if (!password.trim()) newErrors.password = 'Password required';
+  else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+  if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
   if (Object.keys(newErrors).length > 0) {
     setErrors(newErrors);
@@ -305,7 +479,7 @@ export default function CompleteProfile() {
     const businessDataStr = sessionStorage.getItem('businessData');
     const businessData = businessDataStr ? JSON.parse(businessDataStr) : {};
 
-    const servicesData = getAvailableServices()
+    const servicesData = getAllServicesWithCustom()
       .filter(s => selectedServices.includes(s.id))
       .map(service => {
         const details = getServiceDetails(service);
@@ -335,6 +509,11 @@ export default function CompleteProfile() {
         education
       },
       teamMembers,
+      cancellationPolicy: {
+        tier: cancellationPolicy,
+        allowFeeWaiver: allowFeeWaiver
+      },
+      password,
       agreement: {
         signature,
         title: '',
@@ -346,6 +525,8 @@ export default function CompleteProfile() {
     const result = await submitProviderProfile(profileData);
 
     if (result.providerId) {
+      localStorage.setItem('providerId', result.providerId);
+      sessionStorage.setItem('submittedProvider', JSON.stringify({ _id: result.providerId, practiceName, providerTypes: selectedTypes, contactInfo: { email, phone }, address: { street, suite, city, state, zip } }));
       sessionStorage.setItem('providerId', result.providerId);
     }
 
@@ -366,7 +547,7 @@ export default function CompleteProfile() {
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <FindrLogo size="xl" showText={true} />
+          <FindrLogo size="md" showText={true} />
         </div>
       </div>
 
@@ -617,118 +798,232 @@ export default function CompleteProfile() {
 
             {/* SECTION 4: SERVICES */}
             <div className="pb-8 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">4. Services * (Select at least 2)</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">4. Services</h2>
+              <p className="text-gray-600 mb-6">Select the services you offer and customize pricing</p>
               
-              {selectedTypes.length === 0 ? (
-                <p className="text-gray-500">Select provider types above to see available services</p>
-              ) : (
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                    placeholder="Search services..."
-                  />
+              <div className="space-y-4">
+                {/* Category Filter Tabs */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setActiveCategory('all')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${activeCategory === 'all' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  >
+                    All Services
+                  </button>
+                  {serviceCategories.map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition ${activeCategory === cat ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
 
+                {/* Search */}
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                  placeholder="Search services..."
+                />
+
+                {/* Add Custom Service */}
+                <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-600">{selectedServices.length} services selected</p>
+                  {activeCategory !== 'all' && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAddCustomService(!showAddCustomService)}
+                      className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
+                    >
+                      {showAddCustomService ? 'Cancel' : '+ Create Custom Service'}
+                    </button>
+                  )}
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
-                    {getAvailableServices()
-                      .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                      .map(service => {
-                        const isSelected = selectedServices.includes(service.id);
-                        const details = getServiceDetails(service);
-                        const isEditing = editingService === service.id;
+                {showAddCustomService && activeCategory !== 'all' && (
+                  <div className="p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-3">Create a {activeCategory} Service</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                      <div className="md:col-span-2">
+                        <input
+                          type="text"
+                          value={customServiceName}
+                          onChange={(e) => setCustomServiceName(e.target.value)}
+                          placeholder="Service name *"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="number"
+                            value={customServiceDuration}
+                            onChange={(e) => setCustomServiceDuration(e.target.value)}
+                            placeholder="Duration *"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          />
+                          <span className="text-sm text-gray-500">min</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm text-gray-500">$</span>
+                          <input
+                            type="number"
+                            value={customServicePrice}
+                            onChange={(e) => setCustomServicePrice(e.target.value)}
+                            placeholder="Price *"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <textarea
+                        value={customServiceDescription}
+                        onChange={(e) => setCustomServiceDescription(e.target.value)}
+                        placeholder="Description (optional)"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        rows={2}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addCustomService}
+                      className="mt-3 px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700"
+                    >
+                      Add Service
+                    </button>
+                  </div>
+                )}
 
-                        return (
-                          <div
-                            key={service.id}
-                            className={`p-4 border-2 rounded-lg transition ${
-                              isSelected ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
-                            }`}
-                          >
-                            <div className="flex items-start justify-between mb-2">
+
+                {/* Services Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
+                  {getAllServicesWithCustom()
+                    .filter(s => {
+                      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                           s.category.toLowerCase().includes(searchQuery.toLowerCase());
+                      const matchesCategory = activeCategory === 'all' || s.category === activeCategory;
+                      return matchesSearch && matchesCategory;
+                    })
+                    .map(service => {
+                      const isSelected = selectedServices.includes(service.id);
+                      const details = getServiceDetails(service);
+                      const isEditing = editingService === service.id;
+
+                      return (
+                        <div
+                          key={service.id}
+                          className={`p-4 border-2 rounded-lg transition ${isSelected ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <button
+                              type="button"
+                              onClick={() => toggleService(service.id)}
+                              className="flex items-start gap-2 text-left flex-1"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                readOnly
+                                className="mt-1 w-4 h-4 text-teal-600 rounded"
+                              />
+                              <div>
+                                <h4 className="font-medium text-gray-900">{service.name}</h4>
+                                <span className="text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded">{service.category}</span>
+                              </div>
+                            </button>
+                            {isSelected && !isEditing && (
                               <button
                                 type="button"
-                                onClick={() => toggleService(service.id)}
-                                className="flex items-start gap-2 text-left flex-1"
+                                onClick={() => startEdit(service.id)}
+                                className="p-1 text-gray-400 hover:text-teal-600 transition"
+                                title="Edit pricing"
                               >
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  readOnly
-                                  className="mt-1 w-4 h-4 text-teal-600 rounded"
-                                />
-                                <div>
-                                  <h4 className="font-medium text-gray-900">{service.name}</h4>
-                                </div>
+                                <Pencil className="w-4 h-4" />
                               </button>
-                              {isSelected && !isEditing && (
+                            )}
+                          </div>
+
+                          {isEditing ? (
+                            <div className="mt-2 space-y-2 pl-6">
+                              <div className="flex gap-2 items-center">
+                                <input
+                                  type="number"
+                                  value={editDuration}
+                                  onChange={(e) => setEditDuration(e.target.value)}
+                                  placeholder="Duration"
+                                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                                />
+                                <span className="text-sm text-gray-600">min</span>
+                                <span className="text-gray-400">•</span>
+                                <span className="text-sm text-gray-600">$</span>
+                                <input
+                                  type="number"
+                                  value={editPrice}
+                                  onChange={(e) => setEditPrice(e.target.value)}
+                                  placeholder="Price"
+                                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                                />
+                              </div>
+                              <textarea
+                                value={editDescription}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                                placeholder="Description (optional)"
+                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
+                                rows={2}
+                              />
+                              <div className="flex gap-2">
                                 <button
                                   type="button"
-                                  onClick={() => startEdit(service.id)}
-                                  className="p-1 text-gray-400 hover:text-teal-600 transition"
-                                  title="Edit pricing"
+                                  onClick={saveEdit}
+                                  className="px-3 py-1 text-xs bg-teal-500 text-white rounded hover:bg-teal-600"
                                 >
-                                  <Pencil className="w-4 h-4" />
+                                  Save
                                 </button>
-                              )}
-                            </div>
-
-                            {isEditing ? (
-                              <div className="mt-2 space-y-2 pl-6">
-                                <div className="flex gap-2 items-center">
-                                  <input
-                                    type="number"
-                                    value={editDuration}
-                                    onChange={(e) => setEditDuration(e.target.value)}
-                                    placeholder="Duration"
-                                    className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
-                                  />
-                                  <span className="text-sm text-gray-600">min</span>
-                                  <span className="text-gray-400">•</span>
-                                  <span className="text-sm text-gray-600">$</span>
-                                  <input
-                                    type="number"
-                                    value={editPrice}
-                                    onChange={(e) => setEditPrice(e.target.value)}
-                                    placeholder="Price"
-                                    className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
-                                  />
-                                </div>
-                                <div className="flex gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={saveEdit}
-                                    className="px-3 py-1 text-xs bg-teal-500 text-white rounded hover:bg-teal-600"
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={cancelEdit}
-                                    className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
+                                <button
+                                  type="button"
+                                  onClick={cancelEdit}
+                                  className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => deleteService(service.id)}
+                                  className="px-3 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200"
+                                >
+                                  Delete
+                                </button>
                               </div>
-                            ) : (
-                              <p className={`text-sm pl-6 ${details.isCustomized ? 'text-teal-600 font-medium' : 'text-gray-600'}`}>
+                            </div>
+                          ) : (
+                            <div className="pl-6">
+                              <p className={`text-sm ${details.isCustomized ? 'text-teal-600 font-medium' : 'text-gray-600'}`}>
                                 {details.duration} min • ${details.price}
                                 {details.isCustomized && <span className="text-xs ml-1">(edited)</span>}
                               </p>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                  {errors.services && <p className="text-sm text-red-600">{errors.services}</p>}
+                              {details.description && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {details.description.length > 60 ? details.description.substring(0, 60) + '...' : details.description}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
-              )}
+                {errors.services && <p className="text-sm text-red-600">{errors.services}</p>}
+              </div>
             </div>
-
             {/* SECTION 5: OPTIONAL WITH TEAM */}
             <div className="pb-8 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">5. Optional Details</h2>
@@ -814,14 +1109,69 @@ export default function CompleteProfile() {
                   {teamMembers.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       {teamMembers.map((member) => (
-                        <div key={member.id} className="border-2 border-gray-200 rounded-lg p-4 relative">
-                          <button
-                            type="button"
-                            onClick={() => removeTeamMember(member.id)}
-                            className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                    <div key={member.id} className="border-2 border-gray-200 rounded-lg p-4 relative">
+                      {editingMemberId === member.id ? (
+                        /* Edit Mode */
+                        <div className="space-y-3">
+                          <div className="flex gap-3">
+                            <div className="w-20 h-20 flex-shrink-0">
+                              {editMemberPhoto ? (
+                                <img src={editMemberPhoto} alt="" className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" />
+                              ) : (
+                                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+                                  <Users className="w-8 h-8 text-gray-400" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 space-y-2">
+                              <input
+                                type="text"
+                                value={editMemberName}
+                                onChange={(e) => setEditMemberName(e.target.value)}
+                                placeholder="Name *"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              />
+                              <input
+                                type="text"
+                                value={editMemberTitle}
+                                onChange={(e) => setEditMemberTitle(e.target.value)}
+                                placeholder="Title"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              />
+                            </div>
+                          </div>
+                          <textarea
+                            value={editMemberBio}
+                            onChange={(e) => setEditMemberBio(e.target.value)}
+                            placeholder="Bio (optional)"
+                            rows={2}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          />
+                          <div className="flex gap-2">
+                            <button type="button" onClick={saveEditMember} className="px-3 py-1 bg-teal-600 text-white rounded-lg text-sm hover:bg-teal-700">Save</button>
+                            <button type="button" onClick={cancelEditMember} className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
+                            <button type="button" onClick={() => removeTeamMember(member.id)} className="px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm hover:bg-red-200">Delete</button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* View Mode */
+                        <>
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <button
+                              type="button"
+                              onClick={() => startEditMember(member)}
+                              className="p-1 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeTeamMember(member.id)}
+                              className="p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
                           
                           <div className="flex gap-4">
                             {member.photo ? (
@@ -844,8 +1194,10 @@ export default function CompleteProfile() {
                               )}
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        </>
+                      )}
+                    </div>
+                  ))}
                     </div>
                   )}
 
@@ -947,9 +1299,121 @@ export default function CompleteProfile() {
               </div>
             </div>
 
+            {/* SECTION 6: CANCELLATION POLICY */}
+            <div className="border-t border-gray-200 pt-8 pb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">6. Cancellation Policy</h2>
+              <p className="text-gray-600 mb-6">Choose the policy that applies to all bookings at your practice.</p>
+              
+              <div className="space-y-4">
+                {/* Standard Policy */}
+                <label
+                  className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    cancellationPolicy === 'standard'
+                      ? 'border-teal-500 bg-teal-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-start">
+                    <input
+                      type="radio"
+                      name="cancellationPolicy"
+                      value="standard"
+                      checked={cancellationPolicy === 'standard'}
+                      onChange={() => setCancellationPolicy('standard')}
+                      className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
+                    />
+                    <div className="ml-3 flex-1">
+                      <div className="flex items-center">
+                        <span className="font-semibold text-gray-900">Standard</span>
+                        <span className="ml-2 px-2 py-0.5 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">
+                          Recommended
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Patients can cancel free of charge up to 24 hours before their appointment.
+                      </p>
+                      <ul className="mt-3 space-y-1 text-sm text-gray-500">
+                        <li>• 24+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
+                        <li>• 12-24 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
+                        <li>• Under 12 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
+                        <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </label>
+
+                {/* Moderate Policy */}
+                <label
+                  className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    cancellationPolicy === 'moderate'
+                      ? 'border-teal-500 bg-teal-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-start">
+                    <input
+                      type="radio"
+                      name="cancellationPolicy"
+                      value="moderate"
+                      checked={cancellationPolicy === 'moderate'}
+                      onChange={() => setCancellationPolicy('moderate')}
+                      className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
+                    />
+                    <div className="ml-3 flex-1">
+                      <div className="flex items-center">
+                        <span className="font-semibold text-gray-900">Moderate</span>
+                        <span className="ml-2 text-xs text-gray-500">Best for specialists & procedures</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Patients can cancel free of charge up to 48 hours before their appointment.
+                      </p>
+                      <ul className="mt-3 space-y-1 text-sm text-gray-500">
+                        <li>• 48+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
+                        <li>• 24-48 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
+                        <li>• Under 24 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
+                        <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </label>
+
+                {/* Fee Waiver Option */}
+                <div className="border-t pt-4 mt-4">
+                  <label className="flex items-start cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={allowFeeWaiver}
+                      onChange={(e) => setAllowFeeWaiver(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
+                    />
+                    <div className="ml-3">
+                      <span className="font-medium text-gray-900">Allow fee waivers</span>
+                      <p className="text-sm text-gray-500">
+                        You can waive cancellation fees on a case-by-case basis from your dashboard.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Info Box */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                  <div className="flex">
+                    <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div className="ml-3 text-sm text-blue-700">
+                      <p className="font-medium">Important</p>
+                      <p className="mt-1">
+                        When you cancel a booking, the patient always receives a full refund.
+                        You can change your cancellation policy at any time from your dashboard.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
            {/* SECTION 6: AGREEMENT */}
             <div className="pb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">6. Provider Agreement *</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Provider Agreement *</h2>
               
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 max-h-64 overflow-y-auto">
                 <h3 className="font-semibold text-gray-900 mb-3">Provider Participation Agreement Summary</h3>
@@ -1012,6 +1476,46 @@ export default function CompleteProfile() {
                   </div>
                 )}
               </div>
+
+            {/* 7. CREATE PASSWORD */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Create Password *</h2>
+              <p className="text-gray-600 mb-6">Create a password to secure your account and access your dashboard.</p>
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-12 ${errors.password ? "border-red-500" : "border-gray-300"}`}
+                      placeholder="Minimum 8 characters"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`}
+                    placeholder="Re-enter your password"
+                  />
+                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                </div>
+                <p className="text-sm text-gray-500">Password must be at least 8 characters long.</p>
+              </div>
+            </div>
             </div>
 
             {/* SUBMIT BUTTON */}

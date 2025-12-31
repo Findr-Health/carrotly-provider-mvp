@@ -58,7 +58,7 @@ export default function SearchBusiness() {
             <img 
               src="/findr-logo.svg"  
               alt="Findr Health" 
-              className="h-32 w-auto"
+              className="h-16 w-auto"
             />
             <p className="text-gray-600 font-medium">Provider Onboarding</p>
           </div>

@@ -4,9 +4,8 @@ import { useProviderData } from '../hooks/useProviderData';
 import { Button } from '../components/common';
 import { 
   MapPin, Phone, Mail, Globe, Star, Calendar, Camera, 
-  Heart, Clock, DollarSign, Award, Languages
+  Heart, Clock, DollarSign, Award, Languages, ArrowLeft
 } from 'lucide-react';
-import { providerTypes, medicalServices, dentalServices, cosmeticServices, fitnessServices, massageServices, mentalHealthServices, skincareServices, US_STATES, LANGUAGES } from '../data/providerData';
 
 export const ProfilePreview: React.FC = () => {
   const navigate = useNavigate();
@@ -26,29 +25,11 @@ export const ProfilePreview: React.FC = () => {
     );
   }
 
-  // Get service details
-  const allServices = [
-    ...medicalServices,
-    ...dentalServices,
-    ...cosmeticServices,
-    ...fitnessServices,
-    ...massageServices,
-    ...mentalHealthServices,
-    ...skincareServices
-  ];
-  
-  const services = (provider.services || []).map(serviceId => {
-    return allServices.find(s => s.id === serviceId);
-  }).filter(Boolean);
+  // Get services from provider
+  const services = provider.services || [];
 
-  // Get provider type details
-  const selectedTypes = (provider.providerTypes || []).map(typeValue => {
-    const type = providerTypes.find(pt => pt.value === typeValue);
-    return type;
-  }).filter(Boolean);
-
-  // Get state label
-  const stateLabel = US_STATES.find(s => s.value === provider.address?.state)?.label;
+  // Get provider types
+  const selectedTypes = provider.providerTypes || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,9 +37,17 @@ export const ProfilePreview: React.FC = () => {
       <header className="bg-white shadow-sm sticky top-0 z-10 border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Profile Preview</h1>
-              <p className="text-sm text-gray-600">How patients see your profile</p>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Profile Preview</h1>
+                <p className="text-sm text-gray-600">How patients see your profile</p>
+              </div>
             </div>
             
             <div className="flex items-center gap-4">
@@ -72,7 +61,7 @@ export const ProfilePreview: React.FC = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  👤 Patient View
+                  Patient View
                 </button>
                 <button
                   onClick={() => setViewMode('edit')}
@@ -82,15 +71,15 @@ export const ProfilePreview: React.FC = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  ✏️ Edit Mode
+                  Edit Mode
                 </button>
               </div>
               
               <Button
                 variant="primary"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/edit-profile')}
               >
-                Go to Dashboard →
+                Edit Profile
               </Button>
             </div>
           </div>
@@ -102,14 +91,14 @@ export const ProfilePreview: React.FC = () => {
         {/* Hero Section */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
           {/* Cover Image */}
-          <div className="h-48 bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600" />
+          <div className="h-48 bg-gradient-to-r from-teal-500 via-teal-600 to-cyan-500" />
           
           <div className="p-6 -mt-16">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
               {/* Profile Photo */}
-              {provider.photos?.primary ? (
+              {provider.photos && provider.photos.length > 0 ? (
                 <img
-                  src={provider.photos.primary}
+                  src={provider.photos[0].url || provider.photos[0]}
                   alt={provider.practiceName}
                   className="w-32 h-32 rounded-xl border-4 border-white shadow-xl object-cover"
                 />
@@ -124,13 +113,12 @@ export const ProfilePreview: React.FC = () => {
                 
                 {/* Provider Types */}
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {selectedTypes.map(type => (
+                  {selectedTypes.map((type: string) => (
                     <span
-                      key={type!.value}
-                      className="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"
+                      key={type}
+                      className="inline-flex items-center px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium"
                     >
-                      <span className="mr-1.5">{type!.icon}</span>
-                      {type!.label}
+                      {type}
                     </span>
                   ))}
                 </div>
@@ -165,46 +153,47 @@ export const ProfilePreview: React.FC = () => {
           {/* Location Card */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-primary-600" />
+              <MapPin className="w-5 h-5 mr-2 text-teal-600" />
               Location
             </h2>
             <div className="text-gray-700 space-y-1">
               <p>{provider.address?.street}</p>
               {provider.address?.suite && <p>{provider.address.suite}</p>}
               <p>
-                {provider.address?.city}, {stateLabel} {provider.address?.zip}
+                {provider.address?.city}, {provider.address?.state} {provider.address?.zip}
               </p>
             </div>
-            <button className="text-primary-600 hover:text-primary-700 text-sm font-medium mt-3 flex items-center">
-              Get Directions →
+            <button className="text-teal-600 hover:text-teal-700 text-sm font-medium mt-3 flex items-center">
+              Get Directions &rarr;
             </button>
           </div>
           
           {/* Contact Card */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <Phone className="w-5 h-5 mr-2 text-primary-600" />
+              <Phone className="w-5 h-5 mr-2 text-teal-600" />
               Contact
             </h2>
             <div className="space-y-3">
               <div className="flex items-center text-gray-700">
                 <Phone className="w-4 h-4 mr-3 text-gray-400" />
-                <span>{provider.phone}</span>
+                <span>{provider.contactInfo?.phone || provider.phone || 'Not set'}</span>
               </div>
               <div className="flex items-center text-gray-700">
                 <Mail className="w-4 h-4 mr-3 text-gray-400" />
-                <span>{provider.email}</span>
+                <span>{provider.contactInfo?.email || provider.email || 'Not set'}</span>
               </div>
-              {provider.website && (
+              {(provider.contactInfo?.website || provider.website) && (
                 <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-3 text-gray-400" />
                   <a
-                    href={provider.website}
+                  
+                    href={provider.contactInfo?.website || provider.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-600 hover:text-primary-700"
+                    className="text-teal-600 hover:text-teal-700"
                   >
-                    Visit Website →
+                    Visit Website &rarr;
                   </a>
                 </div>
               )}
@@ -212,53 +201,86 @@ export const ProfilePreview: React.FC = () => {
           </div>
         </div>
 
+        {/* Team Members */}
+        {provider.teamMembers && provider.teamMembers.length > 0 && (
+          <div className="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-6 flex items-center">
+              <Award className="w-6 h-6 mr-2 text-teal-600" />
+              Our Team ({provider.teamMembers.length})
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {provider.teamMembers.map((member: any) => (
+                <div key={member.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-teal-600 font-bold text-lg">
+                      {member.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{member.name}</p>
+                    <p className="text-sm text-teal-600">{member.title}</p>
+                    {member.bio && <p className="text-sm text-gray-600 mt-1">{member.bio}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Services */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-6 flex items-center">
-            <Heart className="w-6 h-6 mr-2 text-primary-600" />
+            <Heart className="w-6 h-6 mr-2 text-teal-600" />
             Services Offered ({services.length})
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {services.map((service: any) => (
-              <div 
-                key={service.id} 
-                className="border border-gray-200 rounded-lg p-4 hover:border-primary-300 hover:shadow-md transition-all"
-              >
-                <h3 className="font-semibold text-gray-900 mb-2">{service.name}</h3>
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                  <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {service.duration} min
-                  </span>
-                  <span className="font-semibold text-gray-900 flex items-center">
-                    <DollarSign className="w-4 h-4" />
-                    {service.price}
-                  </span>
+          {services.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {services.map((service: any) => (
+                <div 
+                  key={service.id || service._id || service.name} 
+                  className="border border-gray-200 rounded-lg p-4 hover:border-teal-300 hover:shadow-md transition-all"
+                >
+                  <h3 className="font-semibold text-gray-900 mb-1">{service.name}</h3>
+                  {service.description && (
+                    <p className="text-sm text-gray-600 mb-2">{service.description}</p>
+                  )}
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <span className="flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      {service.duration} min
+                    </span>
+                    <span className="font-semibold text-gray-900 flex items-center">
+                      <DollarSign className="w-4 h-4" />
+                      {service.price}
+                    </span>
+                  </div>
+                  {viewMode === 'patient' && (
+                    <button className="text-teal-600 hover:text-teal-700 text-sm font-medium mt-3">
+                      Book this service &rarr;
+                    </button>
+                  )}
                 </div>
-                {viewMode === 'patient' && (
-                  <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                    Book this service →
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-8">No services added yet</p>
+          )}
         </div>
 
         {/* Photos Gallery */}
-        {provider.photos?.gallery && provider.photos.gallery.length > 1 && (
+        {provider.photos && provider.photos.length > 0 && (
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-xl font-semibold mb-6 flex items-center">
-              <Camera className="w-6 h-6 mr-2 text-primary-600" />
-              Photos ({provider.photos.gallery.length})
+              <Camera className="w-6 h-6 mr-2 text-teal-600" />
+              Photos ({provider.photos.length})
             </h2>
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {provider.photos.gallery.map((photo, idx) => (
+              {provider.photos.map((photo: any, idx: number) => (
                 <img
                   key={idx}
-                  src={photo}
+                  src={photo.url || photo}
                   alt={`Photo ${idx + 1}`}
                   className="w-full h-48 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity shadow"
                 />
@@ -267,53 +289,55 @@ export const ProfilePreview: React.FC = () => {
           </div>
         )}
 
-        {/* Additional Information */}
-        {provider.optionalInfo && Object.values(provider.optionalInfo).some(value => value !== undefined && value !== null && (Array.isArray(value) ? value.length > 0 : true)) && (
+        {/* Credentials */}
+        {provider.credentials && (
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-6">Additional Information</h2>
+            <h2 className="text-xl font-semibold mb-6">Credentials & Insurance</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {provider.optionalInfo.yearsExperience && (
+              {provider.credentials.licenseNumber && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">License</p>
+                  <p className="font-medium text-gray-900">
+                    {provider.credentials.licenseNumber} ({provider.credentials.licenseState})
+                  </p>
+                </div>
+              )}
+              
+              {provider.credentials.npiNumber && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">NPI Number</p>
+                  <p className="font-medium text-gray-900">{provider.credentials.npiNumber}</p>
+                </div>
+              )}
+              
+              {provider.credentials.yearsExperience && (
                 <div>
                   <p className="text-sm text-gray-500 mb-1 flex items-center">
                     <Award className="w-4 h-4 mr-2" />
                     Experience
                   </p>
-                  <p className="font-medium text-gray-900">{provider.optionalInfo.yearsExperience} years</p>
+                  <p className="font-medium text-gray-900">{provider.credentials.yearsExperience} years</p>
                 </div>
               )}
               
-              {provider.optionalInfo.education && (
+              {provider.credentials.education && (
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Education</p>
-                  <p className="font-medium text-gray-900">{provider.optionalInfo.education}</p>
+                  <p className="font-medium text-gray-900">{provider.credentials.education}</p>
                 </div>
               )}
               
-              {provider.optionalInfo.languagesSpoken && provider.optionalInfo.languagesSpoken.length > 0 && (
-                <div>
-                  <p className="text-sm text-gray-500 mb-1 flex items-center">
-                    <Languages className="w-4 h-4 mr-2" />
-                    Languages
-                  </p>
-                  <p className="font-medium text-gray-900">
-                    {provider.optionalInfo.languagesSpoken
-                      .map(lang => LANGUAGES.find(l => l.value === lang)?.label)
-                      .join(', ')}
-                  </p>
-                </div>
-              )}
-              
-              {provider.optionalInfo.insuranceAccepted && provider.optionalInfo.insuranceAccepted.length > 0 && (
+              {provider.credentials.insuranceAccepted && (
                 <div className="md:col-span-2">
                   <p className="text-sm text-gray-500 mb-2">Insurance Accepted</p>
                   <div className="flex flex-wrap gap-2">
-                    {provider.optionalInfo.insuranceAccepted.map(insurance => (
+                    {provider.credentials.insuranceAccepted.split('\n').filter(Boolean).map((insurance: string, idx: number) => (
                       <span
-                        key={insurance}
-                        className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"
+                        key={idx}
+                        className="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium"
                       >
-                        {insurance.toUpperCase()}
+                        {insurance}
                       </span>
                     ))}
                   </div>

@@ -9,13 +9,16 @@ interface StepBasicsProps {
 }
 
 const providerTypes = [
-  { id: 'medical', label: 'Medical', icon: '🏥' },
-  { id: 'dental', label: 'Dental', icon: '🦷' },
-  { id: 'cosmetic', label: 'Cosmetic', icon: '✨' },
-  { id: 'fitness', label: 'Fitness', icon: '💪' },
-  { id: 'massage', label: 'Massage', icon: '💆' },
-  { id: 'mentalHealth', label: 'Mental Health', icon: '🧠' },
-  { id: 'skincare', label: 'Skincare', icon: '🧴' },
+  { id: 'Medical', label: 'Medical', icon: '🏥' },
+  { id: 'Urgent Care', label: 'Urgent Care', icon: '🚑' },
+  { id: 'Dental', label: 'Dental', icon: '🦷' },
+  { id: 'Mental Health', label: 'Mental Health', icon: '🧠' },
+  { id: 'Skincare/Aesthetics', label: 'Skincare/Aesthetics', icon: '✨' },
+  { id: 'Massage/Bodywork', label: 'Massage/Bodywork', icon: '💆' },
+  { id: 'Fitness/Training', label: 'Fitness/Training', icon: '💪' },
+  { id: 'Yoga/Pilates', label: 'Yoga/Pilates', icon: '🧘' },
+  { id: 'Nutrition/Wellness', label: 'Nutrition/Wellness', icon: '🥗' },
+  { id: 'Pharmacy/RX', label: 'Pharmacy/RX', icon: '💊' },
 ];
 
 export const StepBasics: React.FC<StepBasicsProps> = ({ data, onNext, onBack, isFirstStep }) => {
@@ -89,20 +92,20 @@ export const StepBasics: React.FC<StepBasicsProps> = ({ data, onNext, onBack, is
           What type of services do you provide? *{' '}
           <span className="text-gray-500 font-normal">(Select all that apply)</span>
         </label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {providerTypes.map((type) => (
             <button
               key={type.id}
               type="button"
               onClick={() => toggleType(type.id)}
-              className={`relative p-4 border-2 rounded-xl flex items-center gap-3 transition-all ${
+              className={`relative p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
                 selectedTypes.includes(type.id)
                   ? 'border-teal-500 bg-teal-50'
                   : 'border-gray-200 hover:border-teal-300 bg-white'
               }`}
             >
               <span className="text-3xl">{type.icon}</span>
-              <span className="font-medium text-gray-900">{type.label}</span>
+              <span className="font-medium text-gray-900 text-sm text-center">{type.label}</span>
               {selectedTypes.includes(type.id) && (
                 <Check className="absolute top-2 right-2 w-5 h-5 text-teal-600" />
               )}
@@ -110,7 +113,7 @@ export const StepBasics: React.FC<StepBasicsProps> = ({ data, onNext, onBack, is
           ))}
         </div>
         {errors.providerTypes && (
-          <p className="mt-2 text-sm text-teal-600">{errors.providerTypes}</p>
+          <p className="mt-2 text-sm text-red-600">{errors.providerTypes}</p>
         )}
       </div>
 

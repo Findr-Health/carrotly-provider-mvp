@@ -24,7 +24,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     {
       id: 1,
       title: "Purpose & Relationship",
-      content: "I acknowledge independent-contractor status and no medical advice/referrals by Carrotly."
+      content: "I acknowledge independent-contractor status and no medical advice/referrals by Findr Health."
     },
     {
       id: 2,
@@ -39,7 +39,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     {
       id: 4,
       title: "Payments & Settlement",
-      content: "I appoint Carrotly as limited payment collection agent (agent-of-payee)."
+      content: "I appoint Findr Health as limited payment collection agent (agent-of-payee)."
     },
     {
       id: 5,
@@ -49,7 +49,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     {
       id: 6,
       title: "Cancellations & Refunds",
-      content: "I acknowledge refund transparency and Carrotly refund authority; state-law overrides apply."
+      content: "I acknowledge refund transparency and Findr Health refund authority; state-law overrides apply."
     },
     {
       id: 7,
@@ -74,7 +74,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     {
       id: 11,
       title: "Intellectual Property",
-      content: "I grant display license for my content; acknowledge Carrotly IP; unlawful content may be removed."
+      content: "I grant display license for my content; acknowledge Findr Health IP; unlawful content may be removed."
     },
     {
       id: 12,
@@ -84,7 +84,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     {
       id: 13,
       title: "Limitation of Liability",
-      content: "I accept liability cap equal to fees retained by Carrotly in prior 12 months (exceptions apply)."
+      content: "I accept liability cap equal to fees retained by Findr Health in prior 12 months (exceptions apply)."
     },
     {
       id: 14,
@@ -335,7 +335,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
           <FileText className="w-4 h-4 text-teal-600 mr-2 flex-shrink-0" />
           <p className="text-primary-900">
             <a 
-              href="/Carrotly_Provider_Agreement_Fast_Sign_Fillable.pdf" 
+              href="/Findr Health_Provider_Agreement_Fast_Sign_Fillable.pdf" 
               target="_blank" 
               className="font-medium hover:underline"
             >

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://fearless-achievement-production.up.railway.app/api';
 
 // Search API
 export const searchBusiness = async (businessName: string, zipCode?: string) => {
@@ -8,12 +8,10 @@ export const searchBusiness = async (businessName: string, zipCode?: string) => 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ businessName, zipCode })
     });
-
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Search failed');
     }
-
     return response.json();
   } catch (error: any) {
     console.error('Search error:', error);
@@ -24,12 +22,10 @@ export const searchBusiness = async (businessName: string, zipCode?: string) => 
 export const getPlaceDetails = async (placeId: string) => {
   try {
     const response = await fetch(`${API_URL}/search/place/${placeId}`);
-
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Failed to fetch place details');
     }
-
     return response.json();
   } catch (error: any) {
     console.error('Place details error:', error);
@@ -62,13 +58,10 @@ export const sendVerificationCode = async (
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ providerId, email })
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.error || 'Failed to send verification code');
     }
-
     return data;
   } catch (error: any) {
     console.error('Send code error:', error);
@@ -89,9 +82,7 @@ export const verifyCode = async (
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ providerId, code })
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       return {
         success: false,
@@ -99,7 +90,6 @@ export const verifyCode = async (
         attemptsRemaining: data.attemptsRemaining
       };
     }
-
     return data;
   } catch (error: any) {
     console.error('Verify code error:', error);
@@ -118,15 +108,46 @@ export const submitProviderProfile = async (profileData: any) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(profileData)
     });
-
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Failed to submit profile');
     }
-
     return response.json();
   } catch (error: any) {
     console.error('Submit profile error:', error);
+    throw error;
+  }
+};
+
+// Provider profile API (for returning providers)
+export const getProviderProfile = async (providerId: string) => {
+  try {
+    const response = await fetch(`${API_URL}/providers/${providerId}`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch profile');
+    }
+    return response.json();
+  } catch (error: any) {
+    console.error('Get profile error:', error);
+    throw error;
+  }
+};
+
+export const updateProviderProfile = async (providerId: string, profileData: any) => {
+  try {
+    const response = await fetch(`${API_URL}/providers/${providerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profileData)
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update profile');
+    }
+    return response.json();
+  } catch (error: any) {
+    console.error('Update profile error:', error);
     throw error;
   }
 };
