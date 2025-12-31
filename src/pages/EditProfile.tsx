@@ -102,6 +102,10 @@ export default function EditProfile() {
   const [certifications, setCertifications] = useState('');
   const [insuranceAccepted, setInsuranceAccepted] = useState('');
 
+  // Cancellation Policy state
+  const [cancellationTier, setCancellationTier] = useState<'standard' | 'moderate'>('standard');
+  const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
+
   // Security state
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -136,6 +140,9 @@ export default function EditProfile() {
       setEducation(provider.credentials?.education || '');
       setCertifications(provider.credentials?.certifications || '');
       setInsuranceAccepted(provider.credentials?.insuranceAccepted || '');
+      // Cancellation Policy
+      setCancellationTier(provider.cancellationPolicy?.tier || 'standard');
+      setAllowFeeWaiver(provider.cancellationPolicy?.allowFeeWaiver ?? true);
     }
   }, [provider]);
 
@@ -182,6 +189,10 @@ export default function EditProfile() {
           education,
           certifications,
           insuranceAccepted
+        },
+        cancellationPolicy: {
+          tier: cancellationTier,
+          allowFeeWaiver: allowFeeWaiver
         }
       });
       setSuccessMessage('Profile updated successfully!');
@@ -387,6 +398,7 @@ const cancelEditMember = () => {
     { id: 'team', label: 'Team' },
     { id: 'photos', label: 'Photos' },
     { id: 'credentials', label: 'Credentials' },
+    { id: 'policies', label: 'Policies' },
   ];
 
   return (
@@ -1173,6 +1185,118 @@ const cancelEditMember = () => {
               >
                 {changingPassword ? 'Changing...' : 'Change Password'}
               </button>
+            </div>
+          </div>
+        )}
+        {/* Policies Tab */}
+        {activeTab === 'policies' && (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Cancellation Policy</h2>
+            <p className="text-gray-600 mb-6">Choose the policy that applies to all bookings at your practice.</p>
+            
+            <div className="space-y-4">
+              {/* Standard Policy */}
+              <label
+                className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  cancellationTier === 'standard'
+                    ? 'border-teal-500 bg-teal-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-start">
+                  <input
+                    type="radio"
+                    name="cancellationPolicy"
+                    value="standard"
+                    checked={cancellationTier === 'standard'}
+                    onChange={() => { setCancellationTier('standard'); markChanged(); }}
+                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <div className="flex items-center">
+                      <span className="font-semibold text-gray-900">Standard</span>
+                      <span className="ml-2 px-2 py-0.5 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">
+                        Recommended
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Patients can cancel free of charge up to 24 hours before their appointment.
+                    </p>
+                    <ul className="mt-3 space-y-1 text-sm text-gray-500">
+                      <li>• 24+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
+                      <li>• 12-24 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
+                      <li>• Under 12 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
+                      <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </label>
+
+              {/* Moderate Policy */}
+              <label
+                className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  cancellationTier === 'moderate'
+                    ? 'border-teal-500 bg-teal-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-start">
+                  <input
+                    type="radio"
+                    name="cancellationPolicy"
+                    value="moderate"
+                    checked={cancellationTier === 'moderate'}
+                    onChange={() => { setCancellationTier('moderate'); markChanged(); }}
+                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <div className="flex items-center">
+                      <span className="font-semibold text-gray-900">Moderate</span>
+                      <span className="ml-2 text-xs text-gray-500">Best for specialists & procedures</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Patients can cancel free of charge up to 48 hours before their appointment.
+                    </p>
+                    <ul className="mt-3 space-y-1 text-sm text-gray-500">
+                      <li>• 48+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
+                      <li>• 24-48 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
+                      <li>• Under 24 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
+                      <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </label>
+
+              {/* Fee Waiver Option */}
+              <div className="border-t pt-4 mt-4">
+                <label className="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={allowFeeWaiver}
+                    onChange={(e) => { setAllowFeeWaiver(e.target.checked); markChanged(); }}
+                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
+                  />
+                  <div className="ml-3">
+                    <span className="font-medium text-gray-900">Allow fee waivers</span>
+                    <p className="text-sm text-gray-500">
+                      You can waive cancellation fees on a case-by-case basis from your dashboard.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                <div className="flex">
+                  <div className="ml-3 text-sm text-blue-700">
+                    <p className="font-medium">Important</p>
+                    <p className="mt-1">
+                      When you cancel a booking, the patient always receives a full refund.
+                      Changes to your cancellation policy apply to future bookings only.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
