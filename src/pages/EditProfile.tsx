@@ -102,6 +102,20 @@ export default function EditProfile() {
   const [certifications, setCertifications] = useState('');
   const [insuranceAccepted, setInsuranceAccepted] = useState('');
 
+  // Description/About state
+  const [description, setDescription] = useState('');
+
+  // Business Hours state
+  const [businessHours, setBusinessHours] = useState({
+    monday: { enabled: true, start: '09:00', end: '17:00' },
+    tuesday: { enabled: true, start: '09:00', end: '17:00' },
+    wednesday: { enabled: true, start: '09:00', end: '17:00' },
+    thursday: { enabled: true, start: '09:00', end: '17:00' },
+    friday: { enabled: true, start: '09:00', end: '17:00' },
+    saturday: { enabled: false, start: '09:00', end: '17:00' },
+    sunday: { enabled: false, start: '09:00', end: '17:00' },
+  });
+
   // Cancellation Policy state
   const [cancellationTier, setCancellationTier] = useState<'standard' | 'moderate'>('standard');
   const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
@@ -140,6 +154,13 @@ export default function EditProfile() {
       setEducation(provider.credentials?.education || '');
       setCertifications(provider.credentials?.certifications || '');
       setInsuranceAccepted(provider.credentials?.insuranceAccepted || '');
+      // Description
+      setDescription(provider.description || '');
+      
+      // Business Hours
+      if (provider.calendar?.businessHours) {
+        setBusinessHours(provider.calendar.businessHours);
+      }
       // Cancellation Policy
       setCancellationTier(provider.cancellationPolicy?.tier || 'standard');
       setAllowFeeWaiver(provider.cancellationPolicy?.allowFeeWaiver ?? true);
@@ -175,6 +196,7 @@ export default function EditProfile() {
       await updateProvider({
         practiceName,
         providerTypes: selectedTypes,
+        description,  // ADD THIS
         contactInfo: { phone, email, website },
         address: { street, suite, city, state, zip },
         services,
@@ -189,6 +211,9 @@ export default function EditProfile() {
           education,
           certifications,
           insuranceAccepted
+        },
+        calendar: {  // ADD THIS
+          businessHours
         },
         cancellationPolicy: {
           tier: cancellationTier,
@@ -394,6 +419,7 @@ const cancelEditMember = () => {
   const tabs = [
     { id: 'basic', label: 'Basic Info' },
     { id: 'location', label: 'Location' },
+    { id: 'hours', label: 'Hours' },  // ADD THIS
     { id: 'services', label: 'Services' },
     { id: 'team', label: 'Team' },
     { id: 'photos', label: 'Photos' },
@@ -512,6 +538,19 @@ const cancelEditMember = () => {
                 ))}
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                About Your Practice
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => { setDescription(e.target.value); markChanged(); }}
+                rows={4}
+                placeholder="Tell patients about your practice, specialties, and approach to care..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              <p className="text-sm text-gray-500 mt-1">This appears on your public profile.</p>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -618,6 +657,92 @@ const cancelEditMember = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hours Tab */}
+        {activeTab === 'hours' && (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Business Hours</h2>
+            <p className="text-gray-600 mb-6">Set your regular operating hours. Patients will see these on your profile.</p>
+            
+            <div className="space-y-4">
+              {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const).map((day) => (
+                <div key={day} className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
+                  <label className="flex items-center gap-3 w-32">
+                    <input
+                      type="checkbox"
+                      checked={businessHours[day].enabled}
+                      onChange={(e) => {
+                        setBusinessHours(prev => ({
+                          ...prev,
+                          [day]: { ...prev[day], enabled: e.target.checked }
+                        }));
+                        markChanged();
+                      }}
+                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
+                    />
+                    <span className="font-medium text-gray-900 capitalize">{day}</span>
+                  </label>
+                  
+                  {businessHours[day].enabled ? (
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={businessHours[day].start}
+                        onChange={(e) => {
+                          setBusinessHours(prev => ({
+                            ...prev,
+                            [day]: { ...prev[day], start: e.target.value }
+                          }));
+                          markChanged();
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                      >
+                        {Array.from({ length: 24 }, (_, i) => {
+                          const hour = i.toString().padStart(2, '0');
+                          return (
+                            <React.Fragment key={hour}>
+                              <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
+                              <option value={`${hour}:30`}>{i === 0 ? '12:30 AM' : i < 12 ? `${i}:30 AM` : i === 12 ? '12:30 PM' : `${i - 12}:30 PM`}</option>
+                            </React.Fragment>
+                          );
+                        })}
+                      </select>
+                      <span className="text-gray-500">to</span>
+                      <select
+                        value={businessHours[day].end}
+                        onChange={(e) => {
+                          setBusinessHours(prev => ({
+                            ...prev,
+                            [day]: { ...prev[day], end: e.target.value }
+                          }));
+                          markChanged();
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                      >
+                        {Array.from({ length: 24 }, (_, i) => {
+                          const hour = i.toString().padStart(2, '0');
+                          return (
+                            <React.Fragment key={hour}>
+                              <option value={`${hour}:00`}>{i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}</option>
+                              <option value={`${hour}:30`}>{i === 0 ? '12:30 AM' : i < 12 ? `${i}:30 AM` : i === 12 ? '12:30 PM' : `${i - 12}:30 PM`}</option>
+                            </React.Fragment>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 italic">Closed</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <strong>Tip:</strong> Keeping your hours up-to-date helps patients know when they can reach you and reduces missed appointments.
+              </p>
             </div>
           </div>
         )}
