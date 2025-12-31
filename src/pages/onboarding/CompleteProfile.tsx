@@ -836,6 +836,7 @@ export default function CompleteProfile() {
                       )}
                     </div>
                   ))}
+                  </div>
                 </div>
               </div>
             </div>
