@@ -234,16 +234,25 @@ export default function CompleteProfile() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-
-    Array.from(files).forEach(file => {
-      if (photos.length >= 5) return;
-      if (file.size > 5 * 1024 * 1024) return;
-      if (!file.type.startsWith('image/')) return;
-
+    
+    const filesToProcess = Array.from(files).slice(0, 5 - photos.length);
+    
+    filesToProcess.forEach(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File ${file.name} is too large (max 5MB)`);
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert(`File ${file.name} is not an image`);
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          setPhotos(prev => [...prev, e.target!.result as string]);
+          setPhotos(prev => {
+            if (prev.length >= 5) return prev;
+            return [...prev, e.target!.result as string];
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -1683,8 +1692,21 @@ export default function CompleteProfile() {
                     placeholder="John Smith"
                   />
                   {errors.signature && <p className="mt-1 text-sm text-red-600">{errors.signature}</p>}
+                  
+                  {/* Sign Later Option */}
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <button
+                      type="button"
+                      onClick={handleSubmitWithoutSignature}
+                      disabled={loading}
+                      className="text-amber-600 hover:text-amber-700 font-medium text-sm flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <span>Not ready to sign?</span>
+                      <span className="underline">Save profile and sign later →</span>
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1">You can sign the agreement from your dashboard later</p>
+                  </div>
                 </div>
-
                 <label className="flex items-start gap-3">
                   <input
                     type="checkbox"
@@ -1758,19 +1780,6 @@ export default function CompleteProfile() {
               >
                 {loading ? 'Submitting...' : 'Sign & Submit for Approval →'}
               </button>
-              
-              {/* Secondary Submit - Sign Later */}
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-500 mb-2">Not ready to sign yet?</p>
-                <button
-                  type="button"
-                  onClick={handleSubmitWithoutSignature}
-                  disabled={loading}
-                  className="text-teal-600 hover:text-teal-700 font-medium text-sm underline disabled:opacity-50"
-                >
-                  Save profile and sign agreement later →
-                </button>
-              </div>
 
               <p className="text-center text-sm text-gray-600 mt-4">
                 {agreedToTerms && signature.trim() 

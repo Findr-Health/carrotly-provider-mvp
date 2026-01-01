@@ -53,8 +53,7 @@ export const Dashboard: React.FC = () => {
   const [signing, setSigning] = useState(false);
   const [signError, setSignError] = useState('');
 
-  const needsAgreement = provider?.status === 'pending_agreement' || (provider && !provider.agreement?.signed);
-
+  const needsAgreement = provider?.status === 'pending_agreement';
   const handleSignAgreement = async () => {
     if (!signature.trim() || signature.trim().length < 3) {
       setSignError('Please enter your full legal name');
