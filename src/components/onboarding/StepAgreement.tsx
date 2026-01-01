@@ -20,88 +20,98 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
   const [title, setTitle] = useState(data.agreement?.title || '');
   const [showErrors, setShowErrors] = useState(false);
 
-  const agreementSections: AgreementSection[] = [
-    {
-      id: 1,
-      title: "Purpose & Relationship",
-      content: "I acknowledge independent-contractor status and no medical advice/referrals by Findr Health."
-    },
-    {
-      id: 2,
-      title: "Provider Obligations",
-      content: "I confirm required credentials, insurance ($1M/$3M), and compliance with HIPAA/FTC/state law."
-    },
-    {
-      id: 3,
-      title: "Listings, Pricing & Subscriptions",
-      content: "I agree to accurate listings, clear fees, and ROSCA/FTC compliance for recurring offers."
-    },
-    {
-      id: 4,
-      title: "Payments & Settlement",
-      content: "I appoint Findr Health as limited payment collection agent (agent-of-payee)."
-    },
-    {
-      id: 5,
-      title: "Payments & Settlement (Reserves/Refunds)",
-      content: "I authorize delayed release, reserves, and set-offs for refunds/chargebacks."
-    },
-    {
-      id: 6,
-      title: "Cancellations & Refunds",
-      content: "I acknowledge refund transparency and Findr Health refund authority; state-law overrides apply."
-    },
-    {
-      id: 7,
-      title: "Data Protection & HIPAA",
-      content: "I will protect PHI; BAA applies if PHI is exchanged; breach notice within 10 business days."
-    },
-    {
-      id: 8,
-      title: "Marketing & Conduct",
-      content: "I agree to TCPA/CAN-SPAM consent and professional conduct and confidentiality."
-    },
-    {
-      id: 9,
-      title: "Reviews & Ratings",
-      content: "I will not block/buy/manipulate reviews; CRFA + FTC Fake Reviews Rule apply."
-    },
-    {
-      id: 10,
-      title: "Insurance & Indemnification",
-      content: "I accept required insurance limits and indemnification duties."
-    },
-    {
-      id: 11,
-      title: "Intellectual Property",
-      content: "I grant display license for my content; acknowledge Findr Health IP; unlawful content may be removed."
-    },
-    {
-      id: 12,
-      title: "Term & Termination",
-      content: "30-day termination; immediate suspension for fraud/violation; refunds for unserved bookings."
-    },
-    {
-      id: 13,
-      title: "Limitation of Liability",
-      content: "I accept liability cap equal to fees retained by Findr Health in prior 12 months (exceptions apply)."
-    },
-    {
-      id: 14,
-      title: "Dispute Resolution",
-      content: "AAA arbitration with small-claims carve-out and 30-day opt-out; mass-claims staged."
-    },
-    {
-      id: 15,
-      title: "Confidentiality & Accessibility",
-      content: "I agree to confidentiality and ADA/WCAG cooperation."
-    },
-    {
-      id: 16,
-      title: "Amendments & Notices",
-      content: "30-day prospective updates via email/dashboard; right to terminate before effective date."
-    }
-  ];
+  const agreementSections = [
+  {
+    id: 1,
+    title: "1. Definitions",
+    content: "Key terms defined including Booking, Booking Fee, Cancellation Fee, Listing, Patient, Platform, Platform Fee, Processing Fee, Provider Content, and Services."
+  },
+  {
+    id: 2,
+    title: "2. Independent Contractor Status",
+    content: "Provider is an independent contractor, not an employee. Provider controls how services are performed. Findr Health provides no medical advice or referrals. No partnership or joint venture is created."
+  },
+  {
+    id: 3,
+    title: "3. Provider Listing and Account",
+    content: "Provider creates Listings with practice information, services, and pricing. Provider certifies accuracy of all information. Findr Health may review, approve, reject, or remove Listings. Platform operates in United States only."
+  },
+  {
+    id: 4,
+    title: "4. Fees and Payment",
+    content: "Platform Fee: 15% of each Service Fee. Processing Fee: ~2.9% + $0.30 (capped at $35). Findr Health acts as limited payment collection agent. Payouts within 3-5 business days after service completion."
+  },
+  {
+    id: 5,
+    title: "5. Cancellation Policy",
+    content: "Provider selects Standard (24hr) or Moderate (48hr) cancellation policy. Patient cancellation fees apply per policy. Provider cancellations result in full patient refunds. Excessive cancellations may result in termination."
+  },
+  {
+    id: 6,
+    title: "6. Licensing and Credentials",
+    content: "Provider certifies valid licenses and credentials. Provider authorizes verification and background checks (criminal, licensure, OIG/SAM screening, malpractice history). Provider must notify Findr Health of any material changes within 5 business days."
+  },
+  {
+    id: 7,
+    title: "7. Insurance Requirements",
+    content: "Provider must maintain professional liability insurance: $1M per occurrence, $3M aggregate. General liability encouraged. Provider certifies coverage and must notify of any changes within 10 business days."
+  },
+  {
+    id: 8,
+    title: "8. HIPAA and Data Protection",
+    content: "Provider responsible for HIPAA compliance. Findr Health is not a Business Associate. Provider handles all PHI. Provider must report any data breaches within 10 business days."
+  },
+  {
+    id: 9,
+    title: "9. Provider Conduct",
+    content: "Provider agrees to professional standards, FTC compliance, prohibited conduct rules, non-circumvention (no off-platform bookings to avoid fees), audit cooperation, service level expectations (24hr response, 80% acceptance rate), and anti-corruption compliance."
+  },
+  {
+    id: 10,
+    title: "10. Reviews and Ratings",
+    content: "Provider participates in good faith in review system. No fake reviews, manipulation, or retaliation against negative reviews. Provider may respond professionally to reviews."
+  },
+  {
+    id: 11,
+    title: "11. Intellectual Property",
+    content: "Provider grants Findr Health license to use Provider Content. Provider retains ownership of original content. Findr Health owns all Platform IP. Feedback becomes Findr Health property."
+  },
+  {
+    id: 12,
+    title: "12. Indemnification",
+    content: "Provider indemnifies Findr Health against all claims arising from: Provider's services, negligence, malpractice, Agreement breaches, law violations, and Patient disputes. Provider agrees to cooperate with insurance carriers in any claims."
+  },
+  {
+    id: 13,
+    title: "13. Limitation of Liability",
+    content: "Platform provided 'AS IS'. Findr Health not liable for: Provider services, Patient outcomes, or consequential damages. No liability for adverse healthcare outcomes. Exceptions for gross negligence or fraud."
+  },
+  {
+    id: 14,
+    title: "14. Term and Termination",
+    content: "Agreement continues until terminated. Provider may terminate with 30 days notice. Findr Health may terminate immediately for any breach, license issues, insurance lapse, fraud, patient harm, complaints, quality issues, or at sole discretion. Exclusion decisions are FINAL and NOT subject to appeal."
+  },
+  {
+    id: 15,
+    title: "15. Dispute Resolution",
+    content: "30-day informal resolution required first. Binding AAA arbitration in Bozeman, Montana. CLASS ACTION WAIVER - individual claims only. 1-year statute of limitations. 30-day opt-out right for arbitration."
+  },
+  {
+    id: 18,
+    title: "18. Confidentiality",
+    content: "Both parties protect confidential information. Use only for Agreement purposes. Return or destroy upon termination."
+  },
+  {
+    id: 17,
+    title: "17. General Provisions",
+    content: "Montana law governs. 30-day notice for amendments. No assignment without consent. Force majeure applies. Electronic communications accepted. All time periods in Mountain Time."
+  },
+  {
+    id: 18,
+    title: "18. Data Use and Consent",
+    content: "Findr Health collects business and transaction data. Provider consents to data use for Platform operations, analytics, and marketing. Data may be retained after termination for legal compliance."
+  }
+];
 
   const handleInitial = (sectionId: number) => {
     const userInitials = prompt('Please enter your initials (2-3 characters):');
@@ -335,7 +345,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
           <FileText className="w-4 h-4 text-teal-600 mr-2 flex-shrink-0" />
           <p className="text-primary-900">
             <a 
-              href="/Findr Health_Provider_Agreement_Fast_Sign_Fillable.pdf" 
+              href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
               target="_blank" 
               className="font-medium hover:underline"
             >
