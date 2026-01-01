@@ -1525,7 +1525,7 @@ export default function CompleteProfile() {
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <a
-                        href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
+                        href="/legal/Findr_Health_Provider_Participation_Agreement.pdf"
                         download
                         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
                       >
@@ -1774,7 +1774,7 @@ export default function CompleteProfile() {
                       Version 2025 | Effective Date: {new Date().toLocaleDateString()}
                     </p>
                       <a
-                      href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
+                      href="/legal/Findr_Health_Provider_Participation_Agreement.pdf"
                       download
                       className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
                     >
