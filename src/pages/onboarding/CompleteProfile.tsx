@@ -457,8 +457,6 @@ export default function CompleteProfile() {
     };
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
   const handleSubmitWithoutSignature = async () => {
     // Validate everything except signature/agreement
     const newErrors: any = {};
@@ -565,8 +563,11 @@ export default function CompleteProfile() {
       setLoading(false);
     }
   };
-  
-  const newErrors: any = {};
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const newErrors: any = {};
   
   if (!practiceName.trim()) newErrors.practiceName = 'Required';
   if (selectedTypes.length === 0) newErrors.providerTypes = 'Select at least one';
