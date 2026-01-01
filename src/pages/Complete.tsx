@@ -1,4 +1,3 @@
-cat > src/pages/Complete.tsx << 'EOF'
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Clock, Shield, CheckCheck, Rocket, LayoutDashboard, AlertTriangle, FileText } from 'lucide-react';
@@ -230,4 +229,3 @@ export default function Complete() {
     </div>
   );
 }
-EOF
