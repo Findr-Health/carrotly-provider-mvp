@@ -1530,7 +1530,7 @@ export default function CompleteProfile() {
                     className="text-teal-600 hover:underline font-medium mt-4 flex items-center gap-1"
                   >
                     <FileText className="w-4 h-4" />
-                    View full agreement (16 sections)
+                    View full agreement (18 sections)
                   </button>
                 </div>
               </div>
@@ -1560,7 +1560,7 @@ export default function CompleteProfile() {
                     className="mt-1 w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
                   />
                   <span className="text-sm text-gray-700">
-                    I have read and agree to the Provider Participation Agreement, including all 16 sections covering independent contractor status, insurance requirements, payment terms, HIPAA compliance, and dispute resolution. *
+                    I have read and agree to the Provider Participation Agreement, including all 18 sections
                   </span>
                 </label>
                 {errors.terms && <p className="text-sm text-red-600">{errors.terms}</p>}
@@ -1648,87 +1648,97 @@ export default function CompleteProfile() {
             
             <div className="p-6 overflow-y-auto flex-1">
               <div className="prose prose-sm max-w-none text-gray-700 space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Full Agreement (16 Sections)</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Full Agreement (18 Sections)</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-gray-900">1. Purpose & Relationship</h4>
-                    <p>Provider acknowledges independent-contractor status and that Findr Health provides no medical advice or referrals.</p>
+                    <h4 className="font-semibold text-gray-900">1. Definitions</h4>
+                    <p>Key terms defined including Booking, Booking Fee, Cancellation Fee, Listing, Patient, Platform, Platform Fee, Processing Fee, Provider Content, and Services.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">2. Provider Obligations</h4>
-                    <p>Provider confirms required credentials, insurance ($1M/$3M general liability), and compliance with HIPAA, FTC, and state law.</p>
+                    <h4 className="font-semibold text-gray-900">2. Independent Contractor Status</h4>
+                    <p>Provider is an independent contractor, not an employee. Provider controls how services are performed. Findr Health provides no medical advice or referrals.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">3. Listings, Pricing & Subscriptions</h4>
-                    <p>Provider agrees to accurate listings, clear fees, and ROSCA/FTC compliance for recurring offers.</p>
+                    <h4 className="font-semibold text-gray-900">3. Provider Listing and Account</h4>
+                    <p>Provider creates Listings with practice information, services, and pricing. Provider certifies accuracy. Findr Health may review, approve, reject, or remove Listings. Platform operates in United States only.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">4. Payments & Settlement</h4>
-                    <p>Provider appoints Findr Health as limited payment collection agent. Platform fee: 15% of booking value plus Stripe processing fees (2.9% + $0.30).</p>
+                    <h4 className="font-semibold text-gray-900">4. Fees and Payment</h4>
+                    <p>Platform Fee: 15% of each Service Fee. Processing Fee: ~2.9% + $0.30 (capped at $35). Findr Health acts as limited payment collection agent. Payouts within 3-5 business days.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">5. Payment Reserves & Refunds</h4>
-                    <p>Provider authorizes delayed release, reserves, and set-offs for refunds/chargebacks.</p>
+                    <h4 className="font-semibold text-gray-900">5. Cancellation Policy</h4>
+                    <p>Provider selects Standard (24hr) or Moderate (48hr) cancellation policy. Patient cancellation fees apply per policy. Provider cancellations result in full patient refunds.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">6. Cancellations & Refunds</h4>
-                    <p>Provider acknowledges refund transparency and Findr Health refund authority; state-law overrides apply.</p>
+                    <h4 className="font-semibold text-gray-900">6. Licensing and Credentials</h4>
+                    <p>Provider certifies valid licenses and credentials. Provider authorizes verification and background checks (criminal, licensure, OIG/SAM screening, malpractice history). Must notify of material changes within 5 business days.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">7. Data Protection & HIPAA</h4>
-                    <p>Provider will protect PHI; Business Associate Agreement applies if PHI is exchanged; breach notice within 10 business days required.</p>
+                    <h4 className="font-semibold text-gray-900">7. Insurance Requirements</h4>
+                    <p>Provider must maintain professional liability insurance: $1M per occurrence, $3M aggregate. Must notify of any changes within 10 business days.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">8. Marketing & Conduct</h4>
-                    <p>Provider agrees to TCPA/CAN-SPAM consent requirements and professional conduct standards.</p>
+                    <h4 className="font-semibold text-gray-900">8. HIPAA and Data Protection</h4>
+                    <p>Provider responsible for HIPAA compliance. Findr Health is not a Business Associate. Provider handles all PHI. Must report data breaches within 10 business days.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">9. Reviews & Ratings</h4>
-                    <p>Provider will not block, buy, or manipulate reviews; Consumer Review Fairness Act and FTC Fake Reviews Rule apply.</p>
+                    <h4 className="font-semibold text-gray-900">9. Provider Conduct</h4>
+                    <p>Provider agrees to professional standards, FTC compliance, non-circumvention (no off-platform bookings to avoid fees), audit cooperation, service level expectations (24hr response, 80% acceptance rate), and anti-corruption compliance.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">10. Insurance & Indemnification</h4>
-                    <p>Provider accepts required insurance limits and indemnification duties.</p>
+                    <h4 className="font-semibold text-gray-900">10. Reviews and Ratings</h4>
+                    <p>Provider participates in good faith in review system. No fake reviews, manipulation, or retaliation against negative reviews.</p>
                   </div>
                   
                   <div>
                     <h4 className="font-semibold text-gray-900">11. Intellectual Property</h4>
-                    <p>Provider grants display license for content; acknowledges Findr Health IP; unlawful content may be removed.</p>
+                    <p>Provider grants Findr Health license to use Provider Content. Provider retains ownership. Findr Health owns all Platform IP. Feedback becomes Findr Health property.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">12. Term & Termination</h4>
-                    <p>30-day termination notice required; immediate suspension for fraud/violation; refunds for unserved bookings.</p>
+                    <h4 className="font-semibold text-gray-900">12. Indemnification</h4>
+                    <p>Provider indemnifies Findr Health against all claims arising from: Provider's services, negligence, malpractice, Agreement breaches, law violations, and Patient disputes.</p>
                   </div>
                   
                   <div>
                     <h4 className="font-semibold text-gray-900">13. Limitation of Liability</h4>
-                    <p>Liability cap equal to fees retained by Findr Health in prior 12 months (exceptions for gross negligence/fraud apply).</p>
+                    <p>Platform provided 'AS IS'. Findr Health not liable for Provider services, Patient outcomes, or consequential damages. No liability for adverse healthcare outcomes. Exceptions for gross negligence or fraud.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">14. Dispute Resolution</h4>
-                    <p>AAA arbitration with small-claims carve-out and 30-day opt-out right; mass-claims staged processing.</p>
+                    <h4 className="font-semibold text-gray-900">14. Term and Termination</h4>
+                    <p>Provider may terminate with 30 days notice. Findr Health may terminate immediately for any breach, license issues, insurance lapse, fraud, patient harm, complaints, or at sole discretion. <strong>Exclusion decisions are FINAL and NOT subject to appeal.</strong></p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">15. Confidentiality & Accessibility</h4>
-                    <p>Provider agrees to confidentiality and ADA/WCAG cooperation for accessibility.</p>
+                    <h4 className="font-semibold text-gray-900">15. Dispute Resolution</h4>
+                    <p>30-day informal resolution required. Binding AAA arbitration in Bozeman, Montana. <strong>CLASS ACTION WAIVER</strong> - individual claims only. 1-year statute of limitations. 30-day opt-out right.</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-gray-900">16. Amendments & Notices</h4>
-                    <p>30-day prospective updates via email/dashboard; right to terminate before effective date.</p>
+                    <h4 className="font-semibold text-gray-900">16. Confidentiality</h4>
+                    <p>Both parties protect confidential information. Use only for Agreement purposes. Return or destroy upon termination.</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-gray-900">17. General Provisions</h4>
+                    <p>Montana law governs. 30-day notice for amendments. No assignment without consent. Force majeure applies. All time periods in Mountain Time.</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-gray-900">18. Data Use and Consent</h4>
+                    <p>Findr Health collects business and transaction data. Provider consents to data use for Platform operations, analytics, and marketing. Data may be retained after termination.</p>
                   </div>
                 </div>
 
