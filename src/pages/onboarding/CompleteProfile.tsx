@@ -1524,7 +1524,7 @@ export default function CompleteProfile() {
                       Please read the full Provider Participation Agreement before signing. This is a legally binding contract.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                      
+                      <a
                         href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
                         download
                         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
@@ -1773,7 +1773,7 @@ export default function CompleteProfile() {
                     <p className="text-sm text-gray-600">
                       Version 2025 | Effective Date: {new Date().toLocaleDateString()}
                     </p>
-                    
+                      <a
                       href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
                       download
                       className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
