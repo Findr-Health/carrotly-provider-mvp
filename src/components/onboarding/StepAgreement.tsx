@@ -97,8 +97,8 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
     content: "30-day informal resolution required first. Binding AAA arbitration in Bozeman, Montana. CLASS ACTION WAIVER - individual claims only. 1-year statute of limitations. 30-day opt-out right for arbitration."
   },
   {
-    id: 18,
-    title: "18. Confidentiality",
+    id: 16,
+    title: "16. Confidentiality",
     content: "Both parties protect confidential information. Use only for Agreement purposes. Return or destroy upon termination."
   },
   {
@@ -243,7 +243,7 @@ export const StepAgreement: React.FC<StepAgreementProps> = ({ data, onNext, onBa
                       <Circle size={18} className={`flex-shrink-0 ${showErrors ? 'text-red-400' : 'text-gray-400'}`} />
                     )}
                     <h4 className="font-semibold text-gray-900 text-sm">
-                      {section.id}. {section.title}
+                      {section.title}
                     </h4>
                   </div>
                   <p className="text-gray-700 text-sm ml-6 leading-relaxed">{section.content}</p>
