@@ -459,6 +459,112 @@ export default function CompleteProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  const handleSubmitWithoutSignature = async () => {
+    // Validate everything except signature/agreement
+    const newErrors: any = {};
+    
+    if (!practiceName.trim()) newErrors.practiceName = 'Required';
+    if (selectedTypes.length === 0) newErrors.providerTypes = 'Select at least one';
+    if (!phone.trim()) newErrors.phone = 'Required';
+    if (!email.trim()) newErrors.email = 'Required';
+    if (!street.trim()) newErrors.street = 'Required';
+    if (!city.trim()) newErrors.city = 'Required';
+    if (!state) newErrors.state = 'Required';
+    if (!zip.trim()) newErrors.zip = 'Required';
+    if (photos.length === 0) newErrors.photos = 'Upload at least 1 photo';
+    if (!password.trim()) newErrors.password = 'Password required';
+    else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Confirm with user
+    const confirmed = window.confirm(
+      'Save your profile without signing the agreement?\n\n' +
+      'You can sign the agreement later from your Provider Dashboard, but your profile won\'t be reviewed until you sign.'
+    );
+    
+    if (!confirmed) return;
+
+    setLoading(true);
+
+    try {
+      const businessDataStr = sessionStorage.getItem('businessData');
+      const businessData = businessDataStr ? JSON.parse(businessDataStr) : {};
+
+      const servicesData = getAllServicesWithCustom()
+        .filter(s => selectedServices.includes(s.id))
+        .map(service => {
+          const details = getServiceDetails(service);
+          return {
+            id: service.id,
+            name: service.name,
+            category: service.category,
+            duration: details.duration,
+            price: details.price
+          };
+        });
+
+      const profileData = {
+        placeId: businessData.placeId,
+        practiceName,
+        description,
+        providerTypes: selectedTypes,
+        phone,
+        email,
+        address: { street, suite, city, state, zip },
+        website,
+        calendar: { businessHours },
+        photos,
+        services: servicesData,
+        optionalInfo: {
+          licenseNumber,
+          licenseState,
+          yearsExperience: yearsExperience ? parseInt(yearsExperience) : undefined,
+          education
+        },
+        teamMembers,
+        cancellationPolicy: {
+          tier: cancellationPolicy,
+          allowFeeWaiver: allowFeeWaiver
+        },
+        password,
+        // No agreement data - will be signed later
+        agreement: null
+      };
+
+      const result = await submitProviderProfile(profileData);
+
+      if (result.providerId) {
+        localStorage.setItem('providerId', result.providerId);
+        sessionStorage.setItem('submittedProvider', JSON.stringify({ 
+          _id: result.providerId, 
+          practiceName, 
+          providerTypes: selectedTypes, 
+          contactInfo: { email, phone }, 
+          address: { street, suite, city, state, zip },
+          needsSignature: true
+        }));
+        sessionStorage.setItem('providerId', result.providerId);
+      }
+
+      sessionStorage.removeItem('businessData');
+      sessionStorage.removeItem('selectedPlace');
+      localStorage.removeItem('onboardingData');
+
+      // Navigate to completion page with sign-later flag
+      navigate('/complete?signLater=true');
+
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      alert('Failed to submit: ' + (error.message || 'Unknown error'));
+      setLoading(false);
+    }
+  };
   
   const newErrors: any = {};
   
@@ -1641,17 +1747,35 @@ export default function CompleteProfile() {
             </div>
             </div>
 
-            {/* SUBMIT BUTTON */}
+            {/* SUBMIT BUTTONS */}
             <div className="pt-6 border-t border-gray-200">
+              {/* Primary Submit - With Signature */}
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-xl font-semibold text-lg hover:from-teal-600 hover:to-cyan-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+                disabled={loading || !agreedToTerms || !signature.trim()}
+                className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-xl font-semibold text-lg hover:from-teal-600 hover:to-cyan-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Submitting...' : 'Submit for Approval →'}
+                {loading ? 'Submitting...' : 'Sign & Submit for Approval →'}
               </button>
+              
+              {/* Secondary Submit - Sign Later */}
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-500 mb-2">Not ready to sign yet?</p>
+                <button
+                  type="button"
+                  onClick={handleSubmitWithoutSignature}
+                  disabled={loading}
+                  className="text-teal-600 hover:text-teal-700 font-medium text-sm underline disabled:opacity-50"
+                >
+                  Save profile and sign agreement later →
+                </button>
+              </div>
+
               <p className="text-center text-sm text-gray-600 mt-4">
-                You'll receive an email within 24-48 hours with your approval status
+                {agreedToTerms && signature.trim() 
+                  ? "You'll receive an email within 24-48 hours with your approval status"
+                  : "You can sign the agreement later from your provider dashboard"
+                }
               </p>
             </div>
           </form>

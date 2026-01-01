@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProviderData } from '../hooks/useProviderData';
-import { Eye, Calendar, Star, DollarSign, Bell, User, Edit, Plus, MessageSquare, Settings, TrendingUp, LogOut, RefreshCw, BarChart3 } from 'lucide-react';
+import { Eye, Calendar, Star, DollarSign, Bell, User, Edit, Plus, MessageSquare, Settings, TrendingUp, LogOut, RefreshCw, BarChart3, FileText, AlertTriangle, X, Download } from 'lucide-react';
 import FindrLogo from '../components/branding/FindrLogo';
 
 interface StatsCardProps {
@@ -41,10 +41,63 @@ const StatsCard: React.FC<StatsCardProps> = ({ icon: Icon, label, value, change,
   );
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://fearless-achievement-production.up.railway.app/api';
+
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { provider, loading, refreshProvider, clearProvider } = useProviderData();
   const [refreshing, setRefreshing] = useState(false);
+  const [showSigningModal, setShowSigningModal] = useState(false);
+  const [signature, setSignature] = useState('');
+  const [signerTitle, setSignerTitle] = useState('');
+  const [signing, setSigning] = useState(false);
+  const [signError, setSignError] = useState('');
+
+  const needsAgreement = provider?.status === 'pending_agreement' || (provider && !provider.agreement?.signed);
+
+  const handleSignAgreement = async () => {
+    if (!signature.trim() || signature.trim().length < 3) {
+      setSignError('Please enter your full legal name');
+      return;
+    }
+
+    setSigning(true);
+    setSignError('');
+
+    try {
+      const response = await fetch(`${API_URL}/providers/${provider._id}/sign-agreement`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          signature: signature.trim(),
+          title: signerTitle.trim()
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to sign agreement');
+      }
+
+      // Refresh provider data to get updated status
+      await refreshProvider();
+      setShowSigningModal(false);
+      setSignature('');
+      setSignerTitle('');
+      
+      // Show success message
+      alert('Agreement signed successfully! Your application is now under review.');
+
+    } catch (error: any) {
+      console.error('Sign agreement error:', error);
+      setSignError(error.message || 'Failed to sign agreement. Please try again.');
+    } finally {
+      setSigning(false);
+    }
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -138,9 +191,10 @@ export const Dashboard: React.FC = () => {
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                       provider.status === 'approved' ? 'bg-green-100 text-green-800' :
                       provider.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      provider.status === 'pending_agreement' ? 'bg-amber-100 text-amber-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
-                      {provider.status || 'pending'}
+                      {provider.status === 'pending_agreement' ? 'Needs Signature' : provider.status || 'pending'}
                     </span>
                   </p>
                 </div>
@@ -159,16 +213,52 @@ export const Dashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Agreement Required Banner */}
+        {needsAgreement && (
+          <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl p-6 mb-6 shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-white/20 rounded-full">
+                <AlertTriangle className="w-8 h-8" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-2">Action Required: Sign Provider Agreement</h2>
+                <p className="text-amber-100 mb-4">
+                  Your profile has been saved, but your application won't be reviewed until you sign the Provider Participation Agreement.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => setShowSigningModal(true)}
+                    className="px-6 py-2 bg-white text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition-colors flex items-center gap-2"
+                  >
+                    <FileText className="w-5 h-5" />
+                    Sign Agreement Now
+                  </button>
+                    <a
+                    href="/legal/Findr_Health_Provider_Participation_Agreement.pdf"
+                    download
+                    className="px-6 py-2 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-colors flex items-center gap-2 border border-amber-400"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl p-6 mb-8 shadow-lg">
+        <div className={`bg-gradient-to-r ${needsAgreement ? 'from-gray-600 to-gray-700' : 'from-teal-600 to-teal-700'} text-white rounded-xl p-6 mb-8 shadow-lg`}>
           <h2 className="text-2xl font-bold mb-2">
             Welcome back, {provider.practiceName}!
           </h2>
-          <p className="text-teal-100">
+          <p className={needsAgreement ? 'text-gray-300' : 'text-teal-100'}>
             {provider.status === 'approved' 
               ? 'Your profile is live and visible to patients.'
               : provider.status === 'pending'
               ? 'Your profile is under review. We\'ll notify you once approved.'
+              : provider.status === 'pending_agreement'
+              ? 'Please sign the agreement above to submit your application for review.'
               : 'Complete your profile to get started.'}
           </p>
         </div>
@@ -370,6 +460,146 @@ export const Dashboard: React.FC = () => {
             Contact Support →
           </a>
         </div>
+        {/* Agreement Signing Modal */}
+        {showSigningModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Sign Provider Agreement</h2>
+                <button
+                  onClick={() => setShowSigningModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto flex-1">
+                {/* Agreement Summary */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <FileText className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-blue-900 mb-1">Provider Participation Agreement</h3>
+                      <p className="text-sm text-blue-700 mb-3">
+                        By signing below, you agree to the terms of the Findr Health Provider Participation Agreement (Version 2025).
+                      </p>
+                        <a
+                        href="/legal/Findr_Health_Provider_Participation_Agreement.pdf"
+                        download
+                        className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Full Agreement (PDF)
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Terms */}
+                <div className="mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-3">Key Terms Summary</h3>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      Platform Fee: 15% + Stripe processing fees (capped at $35)
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      Professional liability insurance required ($1M/$3M)
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      Background checks and credential verification authorized
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      HIPAA compliance and data protection required
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      Class action waiver - individual arbitration only
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-teal-500 mt-1">✓</span>
+                      Termination decisions are final and not subject to appeal
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Signature Fields */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Type Your Full Legal Name to Sign *
+                    </label>
+                    <input
+                      type="text"
+                      value={signature}
+                      onChange={(e) => setSignature(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent font-serif text-lg"
+                      placeholder="John Smith"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Title (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={signerTitle}
+                      onChange={(e) => setSignerTitle(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Owner, Director, etc."
+                    />
+                  </div>
+
+                  {signature && (
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <p className="text-sm text-gray-600 mb-1">Signature Preview:</p>
+                      <p className="text-2xl font-serif text-gray-900">{signature}</p>
+                      {signerTitle && <p className="text-sm text-gray-600 mt-1">Title: {signerTitle}</p>}
+                      <p className="text-sm text-gray-500 mt-2">Date: {new Date().toLocaleDateString()}</p>
+                    </div>
+                  )}
+
+                  {signError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                      {signError}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3">
+                <button
+                  onClick={() => setShowSigningModal(false)}
+                  className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSignAgreement}
+                  disabled={signing || !signature.trim()}
+                  className="flex-1 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl font-semibold hover:from-teal-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {signing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Signing...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-5 h-5" />
+                      Sign Agreement
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
