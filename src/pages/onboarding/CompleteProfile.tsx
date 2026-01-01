@@ -1512,26 +1512,52 @@ export default function CompleteProfile() {
             <div className="pb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Provider Agreement *</h2>
               
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 max-h-64 overflow-y-auto">
-                <h3 className="font-semibold text-gray-900 mb-3">Provider Participation Agreement Summary</h3>
+              {/* Download & View Agreement Box */}
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-blue-100 rounded-full">
+                    <FileText className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-2">Review Before Signing</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Please read the full Provider Participation Agreement before signing. This is a legally binding contract.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      
+                        href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
+                        download
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Download Full Agreement
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setShowAgreementModal(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm"
+                      >
+                        View Summary (18 Sections)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agreement Summary */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                <h3 className="font-semibold text-gray-900 mb-3">Key Terms Summary</h3>
                 <div className="text-sm text-gray-700 space-y-2">
                   <p>By signing below, you agree to:</p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
-                    <li>Maintain required professional insurance ($1M/$3M)</li>
+                    <li>Maintain required professional liability insurance ($1M/$3M)</li>
+                    <li>Authorize background checks and credential verification</li>
                     <li>Comply with HIPAA and state regulations</li>
                     <li>Provide accurate service listings and pricing</li>
-                    <li>Platform fee: 15% + Stripe processing fees</li>
-                    <li>30-day termination notice</li>
-                    <li>Binding arbitration for disputes</li>
+                    <li>Platform fee: 15% + Stripe processing fees (capped at $35)</li>
+                    <li>Class action waiver - individual arbitration only</li>
+                    <li>Termination decisions are final and not subject to appeal</li>
                   </ul>
-                  <button
-                    type="button"
-                    onClick={() => setShowAgreementModal(true)}
-                    className="text-teal-600 hover:underline font-medium mt-4 flex items-center gap-1"
-                  >
-                    <FileText className="w-4 h-4" />
-                    View full agreement (18 sections)
-                  </button>
                 </div>
               </div>
 
@@ -1743,9 +1769,19 @@ export default function CompleteProfile() {
                 </div>
 
                 <div className="pt-6 border-t border-gray-200">
-                  <p className="text-sm text-gray-600">
-                    Version 2025 | Effective Date: {new Date().toLocaleDateString()}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-600">
+                      Version 2025 | Effective Date: {new Date().toLocaleDateString()}
+                    </p>
+                    
+                      href="/legal/Findr_Health_Provider_Participation_Agreement.docx"
+                      download
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Download Full Document
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
