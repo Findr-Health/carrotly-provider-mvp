@@ -485,7 +485,31 @@ export default function CompleteProfile() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Scroll to first error field
+      const errorFieldMap: Record<string, string> = {
+        practiceName: 'practiceName',
+        providerTypes: 'providerTypes',
+        phone: 'phone',
+        email: 'email',
+        street: 'street',
+        city: 'city',
+        state: 'state',
+        zip: 'zip',
+        photos: 'photos',
+        password: 'password-input',
+        confirmPassword: 'confirm-password-input'
+      };
+      
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const elementId = errorFieldMap[firstErrorKey];
+      if (elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }
       return;
     }
 
@@ -596,7 +620,33 @@ export default function CompleteProfile() {
 
   if (Object.keys(newErrors).length > 0) {
     setErrors(newErrors);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Scroll to first error field
+    const errorFieldMap: Record<string, string> = {
+      practiceName: 'practiceName',
+      providerTypes: 'providerTypes',
+      phone: 'phone',
+      email: 'email',
+      street: 'street',
+      city: 'city',
+      state: 'state',
+      zip: 'zip',
+      photos: 'photos',
+      password: 'password-input',
+      confirmPassword: 'confirm-password-input',
+      signature: 'signature-input',
+      terms: 'signature-input'
+    };
+    
+    const firstErrorKey = Object.keys(newErrors)[0];
+    const elementId = errorFieldMap[firstErrorKey];
+    if (elementId) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+    }
     return;
   }
 
@@ -1624,9 +1674,51 @@ export default function CompleteProfile() {
               </div>
             </div>
 
-           {/* SECTION 6: AGREEMENT */}
-            <div className="pb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Provider Agreement *</h2>
+           {/* SECTION 7: CREATE PASSWORD */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8" id="password-section">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Create Password *</h2>
+              <p className="text-gray-600 mb-6">Create a password to secure your account and access your dashboard.</p>
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <div className="relative">
+                    <input
+                      id="password-input"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-12 ${errors.password ? "border-red-500" : "border-gray-300"}`}
+                      placeholder="Minimum 8 characters"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <input
+                    id="confirm-password-input"
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`}
+                    placeholder="Re-enter your password"
+                  />
+                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                </div>
+                <p className="text-sm text-gray-500">Password must be at least 8 characters long.</p>
+              </div>
+            </div>
+
+            {/* SECTION 8: AGREEMENT */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8" id="agreement-section">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">8. Provider Agreement *</h2>
               
               {/* Download & View Agreement Box */}
               <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-6">
@@ -1640,7 +1732,7 @@ export default function CompleteProfile() {
                       Please read the full Provider Participation Agreement before signing. This is a legally binding contract.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                      <a
+                        <a
                         href="/legal/Findr_Health_Provider_Participation_Agreement.pdf"
                         download
                         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
@@ -1683,6 +1775,7 @@ export default function CompleteProfile() {
                     Type Your Full Legal Name to Sign *
                   </label>
                   <input
+                    id="signature-input"
                     type="text"
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
@@ -1728,46 +1821,6 @@ export default function CompleteProfile() {
                   </div>
                 )}
               </div>
-
-            {/* 7. CREATE PASSWORD */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">8. Create Password *</h2>
-              <p className="text-gray-600 mb-6">Create a password to secure your account and access your dashboard.</p>
-              <div className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-12 ${errors.password ? "border-red-500" : "border-gray-300"}`}
-                      placeholder="Minimum 8 characters"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                  {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`}
-                    placeholder="Re-enter your password"
-                  />
-                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
-                </div>
-                <p className="text-sm text-gray-500">Password must be at least 8 characters long.</p>
-              </div>
-            </div>
             </div>
 
             {/* SUBMIT BUTTONS */}
