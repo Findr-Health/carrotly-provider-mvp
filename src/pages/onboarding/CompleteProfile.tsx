@@ -762,6 +762,7 @@ export default function CompleteProfile() {
                     Practice or Business Name *
                   </label>
                   <input
+                    id="practiceName"
                     type="text"
                     value={practiceName}
                     onChange={(e) => setPracticeName(e.target.value)}
@@ -773,7 +774,7 @@ export default function CompleteProfile() {
                   {errors.practiceName && <p className="mt-1 text-sm text-red-600">{errors.practiceName}</p>}
                 </div>
 
-                <div>
+                <div id="providerTypes">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Provider Type(s) * <span className="text-gray-500 font-normal">(Select all that apply)</span>
                   </label>
@@ -804,6 +805,7 @@ export default function CompleteProfile() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
                     <input
+                      id="phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
@@ -818,6 +820,7 @@ export default function CompleteProfile() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
                     <input
+                      id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -854,6 +857,7 @@ export default function CompleteProfile() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Street Address *</label>
                   <input
+                    id="street"
                     type="text"
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
@@ -882,6 +886,7 @@ export default function CompleteProfile() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">City *</label>
                     <input
+                      id="city"
                       type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
@@ -896,6 +901,7 @@ export default function CompleteProfile() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">State *</label>
                     <select
+                      id="state"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 ${
@@ -911,6 +917,7 @@ export default function CompleteProfile() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">ZIP *</label>
                     <input
+                      id="zip"
                       type="text"
                       value={zip}
                       onChange={(e) => setZip(e.target.value)}
@@ -1008,7 +1015,7 @@ export default function CompleteProfile() {
             </div>
           
             {/* SECTION 3: PHOTOS */}
-            <div className="pb-8 border-b border-gray-200">
+            <div id="photos" className="pb-8 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">3. Photos *</h2>
               
               <div className="space-y-4">
