@@ -148,8 +148,14 @@ export default function EditProfile() {
         setBusinessHours(provider.calendar.businessHours);
       }
       // Cancellation Policy
-      setCancellationTier(provider.cancellationPolicy?.tier || 'standard');
-      setAllowFeeWaiver(provider.cancellationPolicy?.allowFeeWaiver ?? true);
+      // Cancellation Policy - backend stores as string, not object
+const policy = provider.cancellationPolicy;
+if (typeof policy === 'string') {
+  setCancellationTier(policy as 'standard' | 'moderate');
+} else if (policy?.tier) {
+  setCancellationTier(policy.tier);
+}
+setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) : true);
     }
   }, [provider]);
 
@@ -165,7 +171,7 @@ export default function EditProfile() {
   };
 
   const handleCancel = () => {
-    if (hasChanges) {
+    if (hasChanges && !successMessage) {
       if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
         navigate('/dashboard');
       }
