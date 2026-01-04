@@ -177,38 +177,55 @@ export default function EditProfile() {
   const handleSave = async () => {
     setSaving(true);
     setSuccessMessage('');
-
+    
+    // Transform businessHours to match backend schema
+    const transformedBusinessHours: Record<string, any> = {};
+    Object.entries(businessHours).forEach(([day, hours]) => {
+      transformedBusinessHours[day] = {
+        isOpen: hours.enabled,
+        open: hours.start,
+        close: hours.end
+      };
+    });
+    
+    const updateData = {
+      practiceName,
+      providerTypes: selectedTypes,
+      description,
+      contactInfo: { phone, email, website },
+      address: { street, suite, city, state, zip },
+      services,
+      teamMembers,
+      photos: photos.map((p, idx) => ({ url: p.url, isPrimary: idx === 0 })),
+      credentials: {
+        licenseNumber,
+        licenseState,
+        licenseExpiry,
+        npiNumber,
+        yearsExperience,
+        education,
+        certifications,
+        insuranceAccepted
+      },
+      calendar: {
+        businessHours: transformedBusinessHours
+      },
+      cancellationPolicy: {
+        tier: cancellationTier,
+        allowFeeWaiver: allowFeeWaiver
+      }
+    };
+    
+    console.log('Saving data:', updateData);
+    
     try {
-      await updateProvider({
-        practiceName,
-        providerTypes: selectedTypes,
-        description,  // ADD THIS
-        contactInfo: { phone, email, website },
-        address: { street, suite, city, state, zip },
-        services,
-        teamMembers,
-        photos: photos.map((p, idx) => ({ url: p.url, isPrimary: idx === 0 })),
-        credentials: {
-          licenseNumber,
-          licenseState,
-          licenseExpiry,
-          npiNumber,
-          yearsExperience,
-          education,
-          certifications,
-          insuranceAccepted
-        },
-        calendar: {  // ADD THIS
-          businessHours
-        },
-        cancellationPolicy: {
-          tier: cancellationTier,
-          allowFeeWaiver: allowFeeWaiver
-        }
-      });
-      setSuccessMessage('Profile updated successfully!');
-      setHasChanges(false);
-      setTimeout(() => setSuccessMessage(''), 3000);
+      const result = await updateProvider(updateData);
+      console.log('Save result:', result);
+      if (result) {
+        setSuccessMessage('Profile updated successfully!');
+        setHasChanges(false);
+        setTimeout(() => setSuccessMessage(''), 3000);
+      }
     } catch (error) {
       console.error('Save error:', error);
     } finally {
@@ -266,7 +283,7 @@ export default function EditProfile() {
     };
     
     setTeamMembers([...teamMembers, member]);
-    setNewMember({ name: '', title: '', bio: '', photo: '', serviceIds: [] });
+    setNewMember({ name: '', title: '', bio: '', photo: '' });
     setShowAddMember(false);
     markChanged();
   };
@@ -278,8 +295,8 @@ export default function EditProfile() {
     }
   };
 const startEditMember = (member: TeamMember) => {
-  setEditingMemberId(member.id || (member as any)._id || '');
-  setEditingMemberData({ ...member, serviceIds: member.serviceIds || [] });
+  setEditingMemberId(member.id);
+  setEditingMemberData({ ...member });
 };
 
 const handleChangePassword = async () => {
@@ -702,10 +719,7 @@ const cancelEditMember = () => {
         {activeTab === 'team' && (
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-lg font-semibold">Team Members ({teamMembers.length})</h3>
-                <p className="text-sm text-gray-500">Add team members and assign which services they can perform</p>
-              </div>
+              <h3 className="text-lg font-semibold">Team Members ({teamMembers.length})</h3>
               <button 
                 onClick={() => setShowAddMember(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
@@ -741,79 +755,18 @@ const cancelEditMember = () => {
                     value={newMember.bio}
                     onChange={(e) => setNewMember({ ...newMember, bio: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    rows={2}
+                    rows={3}
                   />
-                  
-                  {/* Service Assignment */}
-                  {services.length > 0 && (
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Services this team member can perform:
-                      </label>
-                      <div className="bg-white border border-gray-200 rounded-lg p-3 max-h-48 overflow-y-auto">
-                        <label className="flex items-center gap-2 mb-2 pb-2 border-b">
-                          <input
-                            type="checkbox"
-                            checked={!newMember.serviceIds || newMember.serviceIds.length === 0}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setNewMember({ ...newMember, serviceIds: [] });
-                              } else {
-                                const allIds = services.map(s => s.id || (s as any)._id);
-                                setNewMember({ ...newMember, serviceIds: allIds });
-                              }
-                            }}
-                            className="h-4 w-4 text-teal-600 rounded"
-                          />
-                          <span className="text-sm font-medium text-gray-900">All Services</span>
-                          <span className="text-xs text-gray-500">(can perform any service)</span>
-                        </label>
-                        {services.map((service) => {
-                          const serviceId = service.id || (service as any)._id;
-                          return (
-                            <label key={serviceId} className="flex items-center gap-2 py-1">
-                              <input
-                                type="checkbox"
-                                checked={newMember.serviceIds?.includes(serviceId) || false}
-                                disabled={!newMember.serviceIds || newMember.serviceIds.length === 0}
-                                onChange={(e) => {
-                                  let currentIds = newMember.serviceIds || [];
-                                  if (currentIds.length === 0) {
-                                    currentIds = [serviceId];
-                                    setNewMember({ ...newMember, serviceIds: currentIds });
-                                  } else if (e.target.checked) {
-                                    setNewMember({ ...newMember, serviceIds: [...currentIds, serviceId] });
-                                  } else {
-                                    setNewMember({ ...newMember, serviceIds: currentIds.filter(id => id !== serviceId) });
-                                  }
-                                }}
-                                className="h-4 w-4 text-teal-600 rounded"
-                              />
-                              <span className="text-sm text-gray-700">{service.name}</span>
-                              <span className="text-xs text-gray-400">({service.category})</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Leave "All Services" checked if this team member can perform any service.
-                      </p>
-                    </div>
-                  )}
                 </div>
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-3">
                   <button
                     onClick={addTeamMember}
-                    disabled={!newMember.name || !newMember.title}
-                    className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
                   >
                     Add Member
                   </button>
                   <button
-                    onClick={() => { 
-                      setShowAddMember(false); 
-                      setNewMember({ name: '', title: '', bio: '', photo: '', serviceIds: [] }); 
-                    }}
+                    onClick={() => { setShowAddMember(false); setNewMember({ name: '', title: '', bio: '', photo: '' }); }}
                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                   >
                     Cancel
@@ -824,141 +777,73 @@ const cancelEditMember = () => {
 
             {/* Team List */}
             <div className="space-y-3">
-              {teamMembers.map((member) => {
-                const memberId = member.id || (member as any)._id;
-                return (
-                  <div key={memberId} className="p-4 bg-gray-50 rounded-lg">
-                    {editingMemberId === memberId ? (
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            value={editingMemberData?.name || ''}
-                            onChange={(e) => setEditingMemberData({...editingMemberData!, name: e.target.value})}
-                            placeholder="Name *"
-                            className="px-3 py-2 border border-gray-300 rounded-lg"
-                          />
-                          <input
-                            type="text"
-                            value={editingMemberData?.title || ''}
-                            onChange={(e) => setEditingMemberData({...editingMemberData!, title: e.target.value})}
-                            placeholder="Title"
-                            className="px-3 py-2 border border-gray-300 rounded-lg"
-                          />
-                        </div>
-                        <textarea
-                          value={editingMemberData?.bio || ''}
-                          onChange={(e) => setEditingMemberData({...editingMemberData!, bio: e.target.value})}
-                          placeholder="Bio"
-                          rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                        />
-                        {services.length > 0 && (
-                          <div className="mt-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Services this team member can perform:
-                            </label>
-                            <div className="bg-white border border-gray-200 rounded-lg p-3 max-h-48 overflow-y-auto">
-                              <label className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                <input
-                                  type="checkbox"
-                                  checked={!editingMemberData?.serviceIds || editingMemberData.serviceIds.length === 0}
-                                  onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setEditingMemberData({...editingMemberData!, serviceIds: []});
-                                    } else {
-                                      const allIds = services.map(s => s.id || (s as any)._id);
-                                      setEditingMemberData({...editingMemberData!, serviceIds: allIds});
-                                    }
-                                  }}
-                                  className="h-4 w-4 text-teal-600 rounded"
-                                />
-                                <span className="text-sm font-medium text-gray-900">All Services</span>
-                              </label>
-                              {services.map((service) => {
-                                const serviceId = service.id || (service as any)._id;
-                                return (
-                                  <label key={serviceId} className="flex items-center gap-2 py-1">
-                                    <input
-                                      type="checkbox"
-                                      checked={editingMemberData?.serviceIds?.includes(serviceId) || false}
-                                      disabled={!editingMemberData?.serviceIds || editingMemberData.serviceIds.length === 0}
-                                      onChange={(e) => {
-                                        let currentIds = editingMemberData?.serviceIds || [];
-                                        if (currentIds.length === 0) {
-                                          currentIds = [serviceId];
-                                          setEditingMemberData({...editingMemberData!, serviceIds: currentIds});
-                                        } else if (e.target.checked) {
-                                          setEditingMemberData({...editingMemberData!, serviceIds: [...currentIds, serviceId]});
-                                        } else {
-                                          setEditingMemberData({...editingMemberData!, serviceIds: currentIds.filter(id => id !== serviceId)});
-                                        }
-                                      }}
-                                      className="h-4 w-4 text-teal-600 rounded"
-                                    />
-                                    <span className="text-sm text-gray-700">{service.name}</span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex gap-2 pt-2">
-                          <button onClick={saveEditMember} className="px-3 py-1.5 bg-teal-600 text-white rounded-lg text-sm hover:bg-teal-700">Save Changes</button>
-                          <button onClick={cancelEditMember} className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-teal-600 font-bold text-lg">{member.name.charAt(0)}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900">{member.name}</p>
-                          <p className="text-sm text-teal-600">{member.title}</p>
-                          {member.bio && <p className="text-sm text-gray-600 mt-1 line-clamp-2">{member.bio}</p>}
-                          <div className="mt-2">
-                            {!member.serviceIds || member.serviceIds.length === 0 ? (
-                              <span className="inline-flex items-center px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Can perform all services</span>
-                            ) : (
-                              <div className="flex flex-wrap gap-1">
-                                {member.serviceIds.slice(0, 3).map((serviceId) => {
-                                  const service = services.find(s => (s.id || (s as any)._id) === serviceId);
-                                  return service ? (
-                                    <span key={serviceId} className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">{service.name}</span>
-                                  ) : null;
-                                })}
-                                {member.serviceIds.length > 3 && (
-                                  <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">+{member.serviceIds.length - 3} more</span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex gap-1 flex-shrink-0">
-                          <button onClick={() => startEditMember(member)} className="p-2 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded" title="Edit team member"><Pencil className="w-4 h-4" /></button>
-                          <button onClick={() => deleteTeamMember(memberId)} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded" title="Remove team member"><Trash2 className="w-4 h-4" /></button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              {teamMembers.length === 0 && !showAddMember && (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3"><Plus className="w-8 h-8 text-gray-400" /></div>
-                  <p className="text-gray-500 mb-2">No team members added yet.</p>
-                  <p className="text-sm text-gray-400">Add team members to show patients who they will be seeing.</p>
-                </div>
+              {teamMembers.map((member) => (
+  <div key={member.id} className="p-4 bg-gray-50 rounded-lg">
+    {editingMemberId === member.id ? (
+      /* Edit Mode */
+      <div className="space-y-3">
+        <input
+          type="text"
+          value={editingMemberData?.name || ''}
+          onChange={(e) => setEditingMemberData({...editingMemberData!, name: e.target.value})}
+          placeholder="Name *"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+        />
+        <input
+          type="text"
+          value={editingMemberData?.title || ''}
+          onChange={(e) => setEditingMemberData({...editingMemberData!, title: e.target.value})}
+          placeholder="Title"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+        />
+        <textarea
+          value={editingMemberData?.bio || ''}
+          onChange={(e) => setEditingMemberData({...editingMemberData!, bio: e.target.value})}
+          placeholder="Bio"
+          rows={2}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+        />
+        <div className="flex gap-2">
+          <button onClick={saveEditMember} className="px-3 py-1 bg-teal-600 text-white rounded-lg text-sm hover:bg-teal-700">Save</button>
+          <button onClick={cancelEditMember} className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
+        </div>
+      </div>
+    ) : (
+      /* View Mode */
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <span className="text-teal-600 font-bold text-lg">
+            {member.name.charAt(0)}
+          </span>
+        </div>
+        <div className="flex-1">
+          <p className="font-medium text-gray-900">{member.name}</p>
+          <p className="text-sm text-teal-600">{member.title}</p>
+          {member.bio && <p className="text-sm text-gray-600 mt-1">{member.bio}</p>}
+        </div>
+        <button
+          onClick={() => startEditMember(member)}
+          className="p-2 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded"
+        >
+          <Pencil className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => deleteTeamMember(member.id)}
+          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    )}
+ </div>
+))}
+              {teamMembers.length === 0 && (
+                <p className="text-gray-500 text-center py-8">No team members added yet.</p>
               )}
             </div>
-            {services.length === 0 && teamMembers.length > 0 && (
-              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-700"><strong>Tip:</strong> Add services first to assign them to team members. Go to the Services tab to add your offerings.</p>
-              </div>
-            )}
           </div>
         )}
+
         {/* Photos Tab */}
         {activeTab === 'photos' && (
           <div className="bg-white rounded-lg shadow-sm p-6">
