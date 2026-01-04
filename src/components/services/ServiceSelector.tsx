@@ -406,7 +406,6 @@ export default function ServiceSelector({
       {/* View Tabs */}
       <div className="flex border-b border-gray-200">
         <button type="button"
-          type="button"
           onClick={() => setActiveTab('quickstart')}
           className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'quickstart'
@@ -419,7 +418,6 @@ export default function ServiceSelector({
         </button>
         <button type="button"
           onClick={() => setActiveTab('browse')}
-          type="button"
           className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'browse'
               ? 'border-teal-500 text-teal-600'
@@ -430,7 +428,6 @@ export default function ServiceSelector({
           Browse All
         </button>
         <button type="button"
-          type="button"
           onClick={() => setActiveTab('custom')}
           className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'custom'

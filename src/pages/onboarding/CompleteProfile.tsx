@@ -1362,7 +1362,7 @@ export default function CompleteProfile() {
                     <li>Authorize background checks and credential verification</li>
                     <li>Comply with HIPAA and state regulations</li>
                     <li>Provide accurate service listings and pricing</li>
-                    <li>Platform fee: 15% + Stripe processing fees (capped at $35)</li>
+                    <li>Platform fee: 10% + $1.50 per booking (capped at $35). Stripe processing: ~2.9% + $0.30 (capped at $35)</li>
                     <li>Class action waiver - individual arbitration only</li>
                     <li>Termination decisions are final and not subject to appeal</li>
                   </ul>
@@ -1481,7 +1481,7 @@ export default function CompleteProfile() {
                   
                   <div>
                     <h4 className="font-semibold text-gray-900">4. Fees and Payment</h4>
-                    <p>Platform Fee: 15% of each Service Fee. Processing Fee: ~2.9% + $0.30 (capped at $35). Findr Health acts as limited payment collection agent. Payouts within 3-5 business days.</p>
+                    <p>Platform Fee: 10% + $1.50 per booking (capped at $35). Processing Fee: ~2.9% + $0.30 (capped at $35). Findr Health acts as limited payment collection agent. Payouts within 3-5 business days.</p>
                   </div>
                   
                   <div>

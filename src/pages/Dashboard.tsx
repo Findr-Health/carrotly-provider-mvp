@@ -501,7 +501,7 @@ export const Dashboard: React.FC = () => {
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li className="flex items-start gap-2">
                       <span className="text-teal-500 mt-1">✓</span>
-                      Platform Fee: 15% + Stripe processing fees (capped at $35)
+                      Platform Fee: 10% + $1.50 per booking (capped at $35). Stripe: ~2.9% + $0.30 (capped at $35)
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-teal-500 mt-1">✓</span>
