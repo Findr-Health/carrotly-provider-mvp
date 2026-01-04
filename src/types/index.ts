@@ -1,66 +1,148 @@
 export interface Provider {
-  id: string;
+  _id?: string;
+  id?: string;
   
   // Step 1: Basics
   practiceName: string;
   providerTypes: string[];
-  phone: string;
-  email: string;
+  phone?: string;
+  email?: string;
+  
+  // Contact Info
+  contactInfo?: {
+    email?: string;
+    phone?: string;
+    website?: string;
+  };
   
   // Step 2: Location
-  address: {
-    street: string;
+  address?: {
+    street?: string;
     suite?: string;
-    city: string;
-    state: string;
-    zip: string;
+    city?: string;
+    state?: string;
+    zip?: string;
   };
   website?: string;
   
+  // Description
+  description?: string;
+  
   // Step 3: Photos
-  photos: {
-    primary: string;
-    gallery: string[];
-  };
+  photos?: Array<{
+    url: string;
+    isPrimary?: boolean;
+    caption?: string;
+  }>;
   
   // Step 4: Services
-  services: string[]; // IDs from standardized service list
+  services?: Array<{
+    _id?: string;
+    id?: string;
+    name: string;
+    category?: string;
+    description?: string;
+    shortDescription?: string;
+    duration?: number;
+    price?: number;
+    basePrice?: number;
+    hasVariants?: boolean;
+    variants?: Array<{
+      name: string;
+      description?: string;
+      price: number;
+      duration?: number;
+      isDefault?: boolean;
+    }>;
+    isActive?: boolean;
+    sortOrder?: number;
+  }>;
   
-  // Step 5: Optional Info
-  optionalInfo?: {
+  // Step 5: Credentials
+  credentials?: {
     licenseNumber?: string;
     licenseState?: string;
-    licenseExpiration?: string;
-    certifications?: string[];
-    insuranceAccepted?: string[];
-    yearsExperience?: number;
+    licenseExpiry?: string;
+    npiNumber?: string;
+    yearsExperience?: string;
     education?: string;
-    specializations?: string[];
-    languagesSpoken?: string[];
+    certifications?: string;
+    insuranceAccepted?: string;
+  };
+  
+  // Team Members
+  teamMembers?: Array<{
+    _id?: string;
+    id?: string;
+    name: string;
+    title?: string;
+    bio?: string;
+    photo?: string;
+    serviceIds?: string[];
+    rating?: number;
+    reviewCount?: number;
+    acceptsBookings?: boolean;
+  }>;
+  
+  // Calendar
+  calendar?: {
+    provider?: string;
+    calendarId?: string;
+    businessHours?: {
+      monday?: { enabled?: boolean; start?: string; end?: string };
+      tuesday?: { enabled?: boolean; start?: string; end?: string };
+      wednesday?: { enabled?: boolean; start?: string; end?: string };
+      thursday?: { enabled?: boolean; start?: string; end?: string };
+      friday?: { enabled?: boolean; start?: string; end?: string };
+      saturday?: { enabled?: boolean; start?: string; end?: string };
+      sunday?: { enabled?: boolean; start?: string; end?: string };
+    };
+  };
+  
+  // Cancellation Policy
+  cancellationPolicy?: {
+    tier?: 'standard' | 'moderate';
+    allowFeeWaiver?: boolean;
   };
   
   // Step 7: Agreement
   agreement?: {
-    initials: Record<number, string>;
-    signature: string;
+    initials?: Record<number, string>;
+    signature?: string;
     title?: string;
-    agreedDate: string;
+    agreedDate?: string;
     ipAddress?: string;
-    version: string;
+    version?: string;
   };
   
   // Metadata
-  createdAt: string;
+  createdAt?: string;
   completedAt?: string;
-  status: 'draft' | 'pending' | 'approved';
+  status?: 'draft' | 'pending' | 'approved' | 'rejected';
+  
+  // Stats
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface Service {
-  id: string;
+  _id?: string;
+  id?: string;
   name: string;
-  duration: number; // minutes
-  price: number;
-  category: string;
+  duration?: number;
+  price?: number;
+  category?: string;
+  description?: string;
+}
+
+export interface TeamMember {
+  _id?: string;
+  id?: string;
+  name: string;
+  title?: string;
+  bio?: string;
+  photo?: string;
+  serviceIds?: string[];
 }
 
 export interface ProviderType {
