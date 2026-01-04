@@ -31,20 +31,16 @@ export const useProviderData = () => {
 
   useEffect(() => {
     const loadProvider = async () => {
-      // First check localStorage for providerId
       const providerId = localStorage.getItem('providerId');
       
       if (providerId) {
-        // Fetch fresh data from API
         await fetchProvider(providerId);
       } else {
-        // Check for cached data
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
             setProvider(parsed);
-            // If we have an ID, refresh from API
             if (parsed._id) {
               await fetchProvider(parsed._id);
             }
@@ -62,7 +58,6 @@ export const useProviderData = () => {
     const providerId = localStorage.getItem('providerId') || provider?._id;
     
     if (!providerId) {
-      // Just update locally if no ID
       const updated = { ...provider, ...data };
       setProvider(updated);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
