@@ -210,10 +210,7 @@ export default function EditProfile() {
       calendar: {
         businessHours: transformedBusinessHours
       },
-      cancellationPolicy: {
-        tier: cancellationTier,
-        allowFeeWaiver: allowFeeWaiver
-      }
+      cancellationPolicy: cancellationTier
     };
     
     console.log('Saving data:', updateData);
