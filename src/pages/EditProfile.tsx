@@ -71,7 +71,7 @@ export default function EditProfile() {
   bio: string;
   photo: string;
   serviceIds?: string[];
-}>({ name: '', title: '', bio: '', photo: '', serviceIds: [] });
+}>({ name: '', title: '', bio: '', photo: '', serviceIds: undefined });
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [editingMemberData, setEditingMemberData] = useState<TeamMember | null>(null);
 
@@ -280,7 +280,7 @@ export default function EditProfile() {
     };
     
     setTeamMembers([...teamMembers, member]);
-    setNewMember({ name: '', title: '', bio: '', photo: '' });
+    setNewMember({ name: '', title: '', bio: '', photo: '', serviceIds: undefined });
     setShowAddMember(false);
     markChanged();
   };
@@ -766,14 +766,13 @@ const cancelEditMember = () => {
                         <label className="flex items-center gap-2 mb-2 pb-2 border-b">
                           <input
                             type="checkbox"
-                            checked={!newMember.serviceIds || newMember.serviceIds.length === 0}
+                            checked={newMember.serviceIds === undefined}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setNewMember({ ...newMember, serviceIds: [] });
-                              } else {
-                                const allIds = services.map(s => s.id || (s as any)._id);
-                                setNewMember({ ...newMember, serviceIds: allIds });
-                              }
+  setNewMember({ ...newMember, serviceIds: undefined });
+} else {
+  setNewMember({ ...newMember, serviceIds: [] });
+}
                             }}
                             className="h-4 w-4 text-teal-600 rounded"
                           />
@@ -787,7 +786,7 @@ const cancelEditMember = () => {
                               <input
                                 type="checkbox"
                                 checked={newMember.serviceIds?.includes(serviceId) || false}
-                                disabled={!newMember.serviceIds || newMember.serviceIds.length === 0}
+                                disabled={newMember.serviceIds === undefined}
                                 onChange={(e) => {
                                   let currentIds = newMember.serviceIds || [];
                                   if (e.target.checked) {
