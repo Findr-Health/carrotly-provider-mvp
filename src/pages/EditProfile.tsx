@@ -758,6 +758,9 @@ const cancelEditMember = () => {
                             onChange={(e) => {
                               if (e.target.checked) {
                                 setNewMember({ ...newMember, serviceIds: [] });
+                              } else {
+                                const allIds = services.map(s => s.id || (s as any)._id);
+                                setNewMember({ ...newMember, serviceIds: allIds });
                               }
                             }}
                             className="h-4 w-4 text-teal-600 rounded"
@@ -863,6 +866,9 @@ const cancelEditMember = () => {
                                   onChange={(e) => {
                                     if (e.target.checked) {
                                       setEditingMemberData({...editingMemberData!, serviceIds: []});
+                                    } else {
+                                      const allIds = services.map(s => s.id || (s as any)._id);
+                                      setEditingMemberData({...editingMemberData!, serviceIds: allIds});
                                     }
                                   }}
                                   className="h-4 w-4 text-teal-600 rounded"
