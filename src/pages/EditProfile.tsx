@@ -755,6 +755,61 @@ const cancelEditMember = () => {
                     rows={3}
                   />
                 </div>
+                  
+                  {/* Service Assignment */}
+                  {services.length > 0 && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Services this team member can perform:
+                      </label>
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 max-h-48 overflow-y-auto">
+                        <label className="flex items-center gap-2 mb-2 pb-2 border-b">
+                          <input
+                            type="checkbox"
+                            checked={!newMember.serviceIds || newMember.serviceIds.length === 0}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewMember({ ...newMember, serviceIds: [] });
+                              } else {
+                                const allIds = services.map(s => s.id || (s as any)._id);
+                                setNewMember({ ...newMember, serviceIds: allIds });
+                              }
+                            }}
+                            className="h-4 w-4 text-teal-600 rounded"
+                          />
+                          <span className="text-sm font-medium text-gray-900">All Services</span>
+                          <span className="text-xs text-gray-500">(can perform any service)</span>
+                        </label>
+                        {services.map((service) => {
+                          const serviceId = service.id || (service as any)._id;
+                          return (
+                            <label key={serviceId} className="flex items-center gap-2 py-1">
+                              <input
+                                type="checkbox"
+                                checked={newMember.serviceIds?.includes(serviceId) || false}
+                                disabled={!newMember.serviceIds || newMember.serviceIds.length === 0}
+                                onChange={(e) => {
+                                  let currentIds = newMember.serviceIds || [];
+                                  if (e.target.checked) {
+                                    setNewMember({ ...newMember, serviceIds: [...currentIds, serviceId] });
+                                  } else {
+                                    const filtered = currentIds.filter(id => id !== serviceId);
+                                    setNewMember({ ...newMember, serviceIds: filtered.length === 0 ? [] : filtered });
+                                  }
+                                }}
+                                className="h-4 w-4 text-teal-600 rounded"
+                              />
+                              <span className="text-sm text-gray-700">{service.name}</span>
+                              <span className="text-xs text-gray-400">({service.category})</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave "All Services" checked if this team member can perform any service.
+                      </p>
+                    </div>
+                  )}
                 <div className="flex gap-2 mt-3">
                   <button
                     onClick={addTeamMember}
