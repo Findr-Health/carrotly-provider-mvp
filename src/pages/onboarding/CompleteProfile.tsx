@@ -30,6 +30,14 @@ interface TeamMember {
   name: string;
   title: string;
   bio: string;
+  serviceIds?: string[];
+}
+interface TeamMember {
+  id: string;
+  photo: string;
+  name: string;
+  title: string;
+  bio: string;
 }
 
 export default function CompleteProfile() {
@@ -86,6 +94,7 @@ export default function CompleteProfile() {
   const [newMemberName, setNewMemberName] = useState('');
   const [newMemberTitle, setNewMemberTitle] = useState('');
   const [newMemberBio, setNewMemberBio] = useState('');
+  const [newMemberServiceIds, setNewMemberServiceIds] = useState<string[]>([]);
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [editMemberName, setEditMemberName] = useState('');
   const [editMemberTitle, setEditMemberTitle] = useState('');
@@ -199,6 +208,7 @@ export default function CompleteProfile() {
       photo: newMemberPhoto,
       name: newMemberName,
       title: newMemberTitle,
+      serviceIds: newMemberServiceIds,
       bio: newMemberBio,
     };
 
@@ -208,6 +218,7 @@ export default function CompleteProfile() {
     setNewMemberName('');
     setNewMemberTitle('');
     setNewMemberBio('');
+    setNewMemberServiceIds([]);
   };
 
   const removeTeamMember = (id: string) => {
@@ -1055,6 +1066,24 @@ export default function CompleteProfile() {
                               {member.bio && (
                                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">{member.bio}</p>
                               )}
+                              {/* Show linked services */}
+                              <div className="mt-2">
+                                {!member.serviceIds || member.serviceIds.length === 0 ? (
+                                  <span className="inline-flex items-center px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Can perform all services</span>
+                                ) : (
+                                  <div className="flex flex-wrap gap-1">
+                                    {member.serviceIds.slice(0, 3).map((serviceId: string) => {
+                                      const service = services.find((s: any) => (s.id || s._id) === serviceId);
+                                      return service ? (
+                                        <span key={serviceId} className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">{service.name}</span>
+                                      ) : null;
+                                    })}
+                                    {member.serviceIds.length > 3 && (
+                                      <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">+{member.serviceIds.length - 3} more</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </>
@@ -1129,6 +1158,58 @@ export default function CompleteProfile() {
                             maxLength={300}
                           />
                           <p className="text-xs text-gray-500 mt-1">{newMemberBio.length}/300</p>
+
+                        {/* Service Assignment */}
+                        {services.length > 0 && (
+                          <div className="mt-4">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Services this team member can perform:
+                            </label>
+                            <div className="bg-white border border-gray-200 rounded-lg p-3 max-h-48 overflow-y-auto">
+                              <label className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                <input
+                                  type="checkbox"
+                                  checked={newMemberServiceIds.length === 0}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setNewMemberServiceIds([]);
+                                    }
+                                  }}
+                                  className="h-4 w-4 text-teal-600 rounded"
+                                />
+                                <span className="text-sm font-medium text-gray-900">All Services</span>
+                                <span className="text-xs text-gray-500">(can perform any service)</span>
+                              </label>
+                              {services.map((service: any) => {
+                                const serviceId = service.id || service._id;
+                                return (
+                                  <label key={serviceId} className="flex items-center gap-2 py-1">
+                                    <input
+                                      type="checkbox"
+                                      checked={newMemberServiceIds.includes(serviceId)}
+                                      disabled={newMemberServiceIds.length === 0}
+                                      onChange={(e) => {
+                                        if (newMemberServiceIds.length === 0) {
+                                          setNewMemberServiceIds([serviceId]);
+                                        } else if (e.target.checked) {
+                                          setNewMemberServiceIds([...newMemberServiceIds, serviceId]);
+                                        } else {
+                                          setNewMemberServiceIds(newMemberServiceIds.filter((id: string) => id !== serviceId));
+                                        }
+                                      }}
+                                      className="h-4 w-4 text-teal-600 rounded"
+                                    />
+                                    <span className="text-sm text-gray-700">{service.name}</span>
+                                    <span className="text-xs text-gray-400">({service.category})</span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Leave "All Services" checked if this team member can perform any service.
+                            </p>
+                          </div>
+                        )}
                         </div>
 
                         <div className="flex gap-3">
