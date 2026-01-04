@@ -2,19 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Camera, Plus, X, Check, Pencil, Trash2 } from 'lucide-react';
 import { useProviderData } from '../hooks/useProviderData';
-
-const providerTypes = [
-  { id: 'Medical', label: 'Medical', icon: '🏥' },
-  { id: 'Urgent Care', label: 'Urgent Care', icon: '🚑' },
-  { id: 'Dental', label: 'Dental', icon: '🦷' },
-  { id: 'Mental Health', label: 'Mental Health', icon: '🧠' },
-  { id: 'Skincare/Aesthetics', label: 'Skincare/Aesthetics', icon: '✨' },
-  { id: 'Massage/Bodywork', label: 'Massage/Bodywork', icon: '💆' },
-  { id: 'Fitness/Training', label: 'Fitness/Training', icon: '💪' },
-  { id: 'Yoga/Pilates', label: 'Yoga/Pilates', icon: '🧘' },
-  { id: 'Nutrition/Wellness', label: 'Nutrition/Wellness', icon: '🥗' },
-  { id: 'Pharmacy/RX', label: 'Pharmacy/RX', icon: '💊' },
-];
+import { ServiceSelector } from "../components/services";
+import { PROVIDER_TYPES } from "../constants/providerTypes";
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -24,14 +13,6 @@ const US_STATES = [
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'
 ];
 
-const SERVICE_CATEGORIES = [
-  "Preventive", "Acute Care", "Chronic Care", "Vaccinations", "Virtual",
-  "Urgent Care", "Minor Procedures", "Diagnostic", "Testing", "IV Therapy",
-  "Restorative", "Cosmetic", "Emergency", "Evaluation", "Therapy",
-  "Psychiatry", "Facials", "Injectables", "Laser", "Consultation",
-  "Massage", "Chiropractic", "Physical Therapy", "Personal Training",
-  "Group Fitness", "Wellness", "Nutrition", "Weight Management", "Primary Care", "General"
-];
 
 interface Service {
   id: string;
@@ -77,10 +58,6 @@ export default function EditProfile() {
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
-  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
-  const [editingServiceData, setEditingServiceData] = useState<Service | null>(null);
-  const [showAddService, setShowAddService] = useState(false);
-  const [newService, setNewService] = useState({ name: '', description: '', category: '', duration: '', price: '' });
 
   // Team state
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -268,52 +245,6 @@ export default function EditProfile() {
       return newPhotos;
     });
     markChanged();
-  };
-
-  // Service functions
-  const addService = () => {
-    if (!newService.name || !newService.price || !newService.duration) return;
-    
-    const service: Service = {
-      id: `svc-${Date.now()}`,
-      name: newService.name,
-      description: newService.description,
-      category: newService.category || 'General',
-      duration: parseInt(newService.duration),
-      price: parseFloat(newService.price)
-    };
-    
-    setServices([...services, service]);
-    setNewService({ name: '', description: '', category: '', duration: '', price: '' });
-    setShowAddService(false);
-    markChanged();
-  };
-
-  const startEditService = (service: Service) => {
-    setEditingServiceId(service.id);
-    setEditingServiceData({ ...service });
-  };
-
-  const cancelEditService = () => {
-    setEditingServiceId(null);
-    setEditingServiceData(null);
-  };
-
-  const saveEditService = () => {
-    if (!editingServiceData) return;
-    setServices(services.map(s => 
-      s.id === editingServiceData.id ? editingServiceData : s
-    ));
-    setEditingServiceId(null);
-    setEditingServiceData(null);
-    markChanged();
-  };
-
-  const deleteService = (id: string) => {
-    if (confirm('Delete this service?')) {
-      setServices(services.filter(s => s.id !== id));
-      markChanged();
-    }
   };
 
   // Team functions
@@ -518,7 +449,7 @@ const cancelEditMember = () => {
                 Provider Types
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                {providerTypes.map((type) => (
+                {PROVIDER_TYPES.map((type) => (
                   <button
                     key={type.id}
                     type="button"
@@ -748,186 +679,17 @@ const cancelEditMember = () => {
         )}
 
         {/* Services Tab */}
-        {activeTab === 'services' && (
+        {activeTab === "services" && (
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Services ({services.length})</h3>
-              <button 
-                onClick={() => setShowAddService(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-              >
-                <Plus className="w-4 h-4" />
-                Add Service
-              </button>
-            </div>
-
-            {/* Add Service Form */}
-            {showAddService && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">New Service</h4>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="Service name *"
-                      value={newService.name}
-                      onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                    <select
-                      value={newService.category}
-                      onChange={(e) => setNewService({ ...newService, category: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg"
-                    >
-                      <option value="">Select Category</option>
-                      {SERVICE_CATEGORIES.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      placeholder="Duration (min) *"
-                      value={newService.duration}
-                      onChange={(e) => setNewService({ ...newService, duration: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Price ($) *"
-                      value={newService.price}
-                      onChange={(e) => setNewService({ ...newService, price: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <textarea
-                    placeholder="Description (optional)"
-                    value={newService.description}
-                    onChange={(e) => setNewService({ ...newService, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    rows={2}
-                  />
-                </div>
-                <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={addService}
-                    className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-                  >
-                    Add Service
-                  </button>
-                  <button
-                    onClick={() => { setShowAddService(false); setNewService({ name: '', description: '', category: '', duration: '', price: '' }); }}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Services List */}
-            <div className="space-y-3">
-              {services.map((service) => (
-                <div key={service.id} className="p-4 bg-gray-50 rounded-lg">
-                  {editingServiceId === service.id && editingServiceData ? (
-                    /* Edit Mode */
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <input
-                          type="text"
-                          value={editingServiceData.name}
-                          onChange={(e) => setEditingServiceData({ ...editingServiceData, name: e.target.value })}
-                          placeholder="Service name"
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
-                        />
-                        <select
-                          value={editingServiceData.category}
-                          onChange={(e) => setEditingServiceData({ ...editingServiceData, category: e.target.value })}
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
-                        >
-                          <option value="">Select Category</option>
-                          {SERVICE_CATEGORIES.map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
-                          ))}
-                        </select>
-                        <input
-                          type="number"
-                          value={editingServiceData.duration}
-                          onChange={(e) => setEditingServiceData({ ...editingServiceData, duration: parseInt(e.target.value) || 0 })}
-                          placeholder="Duration (min)"
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
-                        />
-                        <input
-                          type="number"
-                          value={editingServiceData.price}
-                          onChange={(e) => setEditingServiceData({ ...editingServiceData, price: parseFloat(e.target.value) || 0 })}
-                          placeholder="Price ($)"
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
-                        />
-                      </div>
-                      <textarea
-                        value={editingServiceData.description || ''}
-                        onChange={(e) => setEditingServiceData({ ...editingServiceData, description: e.target.value })}
-                        placeholder="Description (optional)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                        rows={2}
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={saveEditService}
-                          className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={cancelEditService}
-                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={() => { deleteService(editingServiceData.id); setEditingServiceId(null); setEditingServiceData(null); }}
-                          className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 text-sm"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    /* View Mode */
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">{service.name}</p>
-                        <p className="text-sm text-gray-600">{service.category} - {service.duration} min - ${service.price}</p>
-                        {service.description && (
-                          <p className="text-sm text-gray-500 mt-1">{service.description}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        <button
-                          onClick={() => startEditService(service)}
-                          className="p-2 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteService(service.id)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-              {services.length === 0 && (
-                <p className="text-gray-500 text-center py-8">No services added yet. Click "Add Service" to get started.</p>
-              )}
-            </div>
+            <h3 className="text-lg font-semibold mb-4">Services</h3>
+            <ServiceSelector
+              providerTypes={selectedTypes}
+              selectedServices={services}
+              onServicesChange={setServices}
+              mode="editing"
+            />
           </div>
         )}
-
-        {/* Team Tab */}
         {activeTab === 'team' && (
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-4">

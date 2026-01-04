@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Check, Upload, X, Camera, Search, Pencil, AlertCircle, FileText, Users, Plus } from 'lucide-react';
 import FindrLogo from '../../components/branding/FindrLogo';
 import { submitProviderProfile } from '../../services/api';
+// New imports for service components
+import { ServiceSelector, ServiceList, Service } from '../../components/services';
+import { PROVIDER_TYPES, normalizeProviderTypes } from '../../constants/providerTypes';
 
 
 const US_STATES = [
@@ -11,19 +14,6 @@ const US_STATES = [
   'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
   'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'
-];
-
-const providerTypes = [
-  { id: 'Medical', label: 'Medical', icon: '🏥' },
-  { id: 'Urgent Care', label: 'Urgent Care', icon: '🚑' },
-  { id: 'Dental', label: 'Dental', icon: '🦷' },
-  { id: 'Mental Health', label: 'Mental Health', icon: '🧠' },
-  { id: 'Skincare/Aesthetics', label: 'Skincare/Aesthetics', icon: '✨' },
-  { id: 'Massage/Bodywork', label: 'Massage/Bodywork', icon: '💆' },
-  { id: 'Fitness/Training', label: 'Fitness/Training', icon: '💪' },
-  { id: 'Yoga/Pilates', label: 'Yoga/Pilates', icon: '🧘' },
-  { id: 'Nutrition/Wellness', label: 'Nutrition/Wellness', icon: '🥗' },
-  { id: 'Pharmacy/RX', label: 'Pharmacy/RX', icon: '💊' },
 ];
 
 interface Service {
@@ -41,88 +31,6 @@ interface TeamMember {
   title: string;
   bio: string;
 }
-const allServices: Record<string, Service[]> = {
-  'Medical': [
-    { id: 'med-annual-physical', name: 'Annual Physical Exam', category: 'Preventive', duration: 45, price: 150 },
-    { id: 'med-wellness-checkup', name: 'Wellness Checkup', category: 'Preventive', duration: 30, price: 125 },
-    { id: 'med-sick-visit', name: 'Sick Visit', category: 'Acute Care', duration: 20, price: 100 },
-    { id: 'med-diabetes', name: 'Diabetes Management', category: 'Chronic Care', duration: 30, price: 125 },
-    { id: 'med-flu-vax', name: 'Flu Vaccination', category: 'Vaccinations', duration: 15, price: 40 },
-    { id: 'med-telehealth', name: 'Telehealth Consultation', category: 'Virtual', duration: 20, price: 75 },
-  ],
-  'Urgent Care': [
-    { id: 'uc-basic-visit', name: 'Basic Urgent Care Visit', category: 'Urgent Care', duration: 30, price: 75 },
-    { id: 'uc-comprehensive', name: 'Comprehensive Visit', category: 'Urgent Care', duration: 45, price: 150 },
-    { id: 'uc-laceration', name: 'Laceration Repair', category: 'Minor Procedures', duration: 30, price: 200 },
-    { id: 'uc-xray', name: 'X-Ray', category: 'Diagnostic', duration: 20, price: 100 },
-    { id: 'uc-strep', name: 'Strep Test', category: 'Testing', duration: 15, price: 35 },
-    { id: 'uc-iv-hydration', name: 'IV Hydration Therapy', category: 'IV Therapy', duration: 45, price: 150 },
-  ],
-  'Dental': [
-    { id: 'dent-cleaning', name: 'Dental Cleaning', category: 'Preventive', duration: 60, price: 120 },
-    { id: 'dent-exam-xray', name: 'Exam & X-rays', category: 'Preventive', duration: 45, price: 150 },
-    { id: 'dent-filling', name: 'Filling', category: 'Restorative', duration: 60, price: 200 },
-    { id: 'dent-crown', name: 'Crown', category: 'Restorative', duration: 120, price: 1200 },
-    { id: 'dent-whitening', name: 'Teeth Whitening', category: 'Cosmetic', duration: 60, price: 400 },
-    { id: 'dent-emergency', name: 'Emergency Dental Exam', category: 'Emergency', duration: 30, price: 150 },
-  ],
-  'Mental Health': [
-    { id: 'mh-initial', name: 'Initial Evaluation', category: 'Evaluation', duration: 60, price: 250 },
-    { id: 'mh-therapy-60', name: 'Individual Therapy (60 min)', category: 'Therapy', duration: 60, price: 150 },
-    { id: 'mh-therapy-45', name: 'Individual Therapy (45 min)', category: 'Therapy', duration: 45, price: 125 },
-    { id: 'mh-couples', name: 'Couples Therapy', category: 'Therapy', duration: 60, price: 175 },
-    { id: 'mh-med-mgmt', name: 'Medication Management', category: 'Psychiatry', duration: 30, price: 150 },
-    { id: 'mh-telehealth', name: 'Telehealth Session', category: 'Virtual', duration: 50, price: 140 },
-  ],
-  'Skincare/Aesthetics': [
-    { id: 'skin-facial', name: 'Classic Facial', category: 'Facials', duration: 60, price: 120 },
-    { id: 'skin-hydrafacial', name: 'HydraFacial', category: 'Facials', duration: 60, price: 200 },
-    { id: 'skin-botox', name: 'Botox (per area)', category: 'Injectables', duration: 30, price: 350 },
-    { id: 'skin-filler', name: 'Dermal Filler', category: 'Injectables', duration: 45, price: 650 },
-    { id: 'skin-laser-hair', name: 'Laser Hair Removal', category: 'Laser', duration: 30, price: 200 },
-    { id: 'skin-consultation', name: 'Skin Consultation', category: 'Consultation', duration: 30, price: 75 },
-  ],
-  'Massage/Bodywork': [
-    { id: 'mass-swedish-60', name: 'Swedish Massage (60 min)', category: 'Massage', duration: 60, price: 90 },
-    { id: 'mass-deep-60', name: 'Deep Tissue Massage (60 min)', category: 'Massage', duration: 60, price: 110 },
-    { id: 'mass-sports', name: 'Sports Massage', category: 'Massage', duration: 60, price: 110 },
-    { id: 'mass-hot-stone', name: 'Hot Stone Massage', category: 'Massage', duration: 75, price: 130 },
-    { id: 'chiro-adjust', name: 'Chiropractic Adjustment', category: 'Chiropractic', duration: 30, price: 75 },
-    { id: 'pt-session', name: 'Physical Therapy Session', category: 'Physical Therapy', duration: 45, price: 125 },
-  ],
-  'Fitness/Training': [
-    { id: 'fit-pt-single', name: 'Personal Training Session', category: 'Personal Training', duration: 60, price: 80 },
-    { id: 'fit-assessment', name: 'Fitness Assessment', category: 'Assessment', duration: 60, price: 100 },
-    { id: 'fit-nutrition', name: 'Nutrition Consultation', category: 'Coaching', duration: 45, price: 75 },
-    { id: 'fit-group', name: 'Small Group Training', category: 'Group', duration: 60, price: 35 },
-    { id: 'fit-bootcamp', name: 'Bootcamp Class', category: 'Group', duration: 45, price: 25 },
-    { id: 'fit-virtual', name: 'Virtual Training Session', category: 'Virtual', duration: 45, price: 60 },
-  ],
-  'Yoga/Pilates': [
-    { id: 'yoga-drop-in', name: 'Yoga Class (Drop-in)', category: 'Yoga', duration: 60, price: 20 },
-    { id: 'yoga-private', name: 'Private Yoga Session', category: 'Yoga', duration: 60, price: 100 },
-    { id: 'yoga-hot', name: 'Hot Yoga Class', category: 'Yoga', duration: 75, price: 25 },
-    { id: 'pilates-mat', name: 'Pilates Mat Class', category: 'Pilates', duration: 55, price: 25 },
-    { id: 'pilates-reformer', name: 'Pilates Reformer Class', category: 'Pilates', duration: 55, price: 40 },
-    { id: 'meditation', name: 'Guided Meditation', category: 'Mindfulness', duration: 30, price: 15 },
-  ],
-  'Nutrition/Wellness': [
-    { id: 'nutr-initial', name: 'Initial Nutrition Consultation', category: 'Nutrition', duration: 60, price: 150 },
-    { id: 'nutr-followup', name: 'Nutrition Follow-up', category: 'Nutrition', duration: 30, price: 75 },
-    { id: 'nutr-meal-plan', name: 'Custom Meal Plan', category: 'Nutrition', duration: 45, price: 125 },
-    { id: 'well-health-coach', name: 'Health Coaching Session', category: 'Wellness', duration: 60, price: 100 },
-    { id: 'well-weight', name: 'Weight Management Session', category: 'Wellness', duration: 45, price: 85 },
-    { id: 'well-functional', name: 'Functional Medicine Consult', category: 'Holistic', duration: 60, price: 200 },
-  ],
-  'Pharmacy/RX': [
-    { id: 'rx-consult', name: 'Pharmacist Consultation', category: 'Consultation', duration: 15, price: 25 },
-    { id: 'rx-med-review', name: 'Medication Review', category: 'Consultation', duration: 30, price: 50 },
-    { id: 'rx-immunization', name: 'Immunization', category: 'Immunizations', duration: 15, price: 35 },
-    { id: 'rx-flu-shot', name: 'Flu Shot', category: 'Immunizations', duration: 10, price: 40 },
-    { id: 'rx-bp-check', name: 'Blood Pressure Check', category: 'Screenings', duration: 10, price: 0 },
-    { id: 'rx-compound', name: 'Custom Compounding', category: 'Compounding', duration: 30, price: 50 },
-  ],
-};
 
 export default function CompleteProfile() {
   const navigate = useNavigate();
@@ -153,8 +61,7 @@ export default function CompleteProfile() {
 
   const [photos, setPhotos] = useState<string[]>([]);
 
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [customizedServices, setCustomizedServices] = useState<Record<string, { price: number; duration: number }>>({});
+  const [services, setServices] = useState<Service[]>([]);
   const [editingService, setEditingService] = useState<string | null>(null);
   const [editPrice, setEditPrice] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -351,121 +258,6 @@ export default function CompleteProfile() {
     );
   };
 
-  const getAvailableServices = () => {
-    return selectedTypes.flatMap(type => allServices[type] || []);
-  };
-
-  // Get all services from all provider types
-  const getAllServices = () => {
-    const allServicesList: Service[] = [];
-    Object.values(allServices).forEach(services => {
-      services.forEach(service => {
-        if (!allServicesList.find(s => s.id === service.id)) {
-          allServicesList.push(service);
-        }
-      });
-    });
-    return allServicesList;
-  };
-
-  // Get unique categories from all services
-  const serviceCategories = Array.from(
-    new Set(getAllServices().map(s => s.category))
-  ).sort();
-
-  const addCustomService = () => {
-    if (!customServiceName.trim() || !customServiceDuration || !customServicePrice) {
-      alert('Please fill in service name, duration, and price');
-      return;
-    }
-    if (activeCategory === 'all') {
-      alert('Please select a category first');
-      return;
-    }
-    const newService: Service = {
-      id: `custom-${Date.now()}`,
-      name: customServiceName.trim(),
-      description: customServiceDescription.trim(),
-      category: activeCategory,
-      duration: parseInt(customServiceDuration),
-      price: parseFloat(customServicePrice)
-    };
-    setCustomServices(prev => [...prev, newService]);
-    setSelectedServices(prev => [...prev, newService.id]);
-    setCustomServiceName('');
-    setCustomServiceDuration('');
-    setCustomServicePrice('');    setCustomServiceDescription('');
-    setShowAddCustomService(false);
-  };
-
-  const getAllServicesWithCustom = () => {
-    return [...getAllServices(), ...customServices];
-  };
-
-  const startEdit = (serviceId: string) => {
-    const service = getAllServicesWithCustom().find(s => s.id === serviceId);
-    const customized = customizedServices[serviceId];
-    
-    if (service) {
-      setEditingService(serviceId);
-      setEditPrice((customized?.price || service.price).toString());
-      setEditDuration((customized?.duration || service.duration).toString());
-      setEditDescription(customized?.description || service.description || '');
-    }
-  };
-
-  const saveEdit = () => {
-    if (!editingService) return;
-    
-    const price = parseFloat(editPrice);
-    const duration = parseInt(editDuration);
-    
-    if (isNaN(price) || price <= 0) {
-      alert('Please enter a valid price');
-      return;
-    }
-    
-    if (isNaN(duration) || duration <= 0) {
-      alert('Please enter a valid duration');
-      return;
-    }
-    
-    setCustomizedServices(prev => ({
-      ...prev,
-      [editingService]: { price, duration, description: editDescription }
-    }));
-    
-    setEditingService(null);
-  };
-
-  const cancelEdit = () => {
-    setEditingService(null);
-    setEditDuration('');
-    setEditPrice('');
-  };
-
-  const deleteService = (serviceId: string) => {
-    if (!confirm('Are you sure you want to remove this service?')) return;
-    setSelectedServices(prev => prev.filter(id => id !== serviceId));
-    setCustomServices(prev => prev.filter(s => s.id !== serviceId));
-    setCustomizedServices(prev => {
-      const newCustomized = { ...prev };
-      delete newCustomized[serviceId];
-      return newCustomized;
-    });
-    setEditingService(null);
-  };
-
-  const getServiceDetails = (service: Service) => {
-    const customized = customizedServices[service.id];
-    return {
-      price: customized?.price || service.price,
-      duration: customized?.duration || service.duration,
-      description: customized?.description || service.description || '',
-      isCustomized: !!customized
-    };
-  };
-
   const handleSubmitWithoutSignature = async () => {
     // Validate everything except signature/agreement
     const newErrors: any = {};
@@ -479,6 +271,7 @@ export default function CompleteProfile() {
     if (!state) newErrors.state = 'Required';
     if (!zip.trim()) newErrors.zip = 'Required';
     if (photos.length === 0) newErrors.photos = 'Upload at least 1 photo';
+    if (services.length < 1) newErrors.services = 'Add at least one service';
     if (!password.trim()) newErrors.password = 'Password required';
     else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters';
     if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
@@ -527,18 +320,18 @@ export default function CompleteProfile() {
       const businessDataStr = sessionStorage.getItem('businessData');
       const businessData = businessDataStr ? JSON.parse(businessDataStr) : {};
 
-      const servicesData = getAllServicesWithCustom()
-        .filter(s => selectedServices.includes(s.id))
-        .map(service => {
-          const details = getServiceDetails(service);
-          return {
-            id: service.id,
-            name: service.name,
-            category: service.category,
-            duration: details.duration,
-            price: details.price
-          };
-        });
+      const servicesData = services.map(service => ({
+  name: service.name,
+  description: service.description,
+  shortDescription: service.shortDescription,
+  category: service.category,
+  duration: service.duration,
+  basePrice: service.basePrice,
+  price: service.basePrice, // Legacy field support
+  hasVariants: service.hasVariants,
+  variants: service.variants,
+  isActive: service.isActive
+}));
 
       const profileData = {
         placeId: businessData.placeId,
@@ -610,8 +403,8 @@ export default function CompleteProfile() {
   if (!city.trim()) newErrors.city = 'Required';
   if (!state) newErrors.state = 'Required';
   if (!zip.trim()) newErrors.zip = 'Required';
+  if (services.length < 1) newErrors.services = 'Add at least one service';
   if (photos.length === 0) newErrors.photos = 'Upload at least 1 photo';
-  
   if (!signature.trim()) newErrors.signature = 'Signature required';
   if (!agreedToTerms) newErrors.terms = 'Must agree to terms';
   if (!password.trim()) newErrors.password = 'Password required';
@@ -656,18 +449,18 @@ export default function CompleteProfile() {
     const businessDataStr = sessionStorage.getItem('businessData');
     const businessData = businessDataStr ? JSON.parse(businessDataStr) : {};
 
-    const servicesData = getAllServicesWithCustom()
-      .filter(s => selectedServices.includes(s.id))
-      .map(service => {
-        const details = getServiceDetails(service);
-        return {
-          id: service.id,
-          name: service.name,
-          category: service.category,
-          duration: details.duration,
-          price: details.price
-        };
-      });
+    const servicesData = services.map(service => ({
+  name: service.name,
+  description: service.description,
+  shortDescription: service.shortDescription,
+  category: service.category,
+  duration: service.duration,
+  basePrice: service.basePrice,
+  price: service.basePrice, // Legacy field support
+  hasVariants: service.hasVariants,
+  variants: service.variants,
+  isActive: service.isActive
+}));
 
     const profileData = {
       placeId: businessData.placeId,
@@ -774,32 +567,41 @@ export default function CompleteProfile() {
                   {errors.practiceName && <p className="mt-1 text-sm text-red-600">{errors.practiceName}</p>}
                 </div>
 
-                <div id="providerTypes">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Provider Type(s) * <span className="text-gray-500 font-normal">(Select all that apply)</span>
-                  </label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {providerTypes.map((type) => (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => toggleType(type.id)}
-                        className={`relative p-3 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                          selectedTypes.includes(type.id)
-                            ? 'border-teal-500 bg-teal-50'
-                            : 'border-gray-200 hover:border-teal-300 bg-white'
-                        }`}
-                      >
-                        <span className="text-2xl">{type.icon}</span>
-                        <span className="text-sm font-medium text-gray-900">{type.label}</span>
-                        {selectedTypes.includes(type.id) && (
-                          <Check className="absolute top-1 right-1 w-4 h-4 text-teal-600" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  {errors.providerTypes && <p className="mt-2 text-sm text-red-600">{errors.providerTypes}</p>}
-                </div>
+                {/* Provider Types */}
+<div>
+  <label className="block text-sm font-semibold text-gray-700 mb-3">
+    What type of services do you provide? *
+  </label>
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    {PROVIDER_TYPES.map(type => {
+      const isSelected = selectedTypes.includes(type.id);
+      return (
+        <button
+          key={type.id}
+          type="button"
+          onClick={() => {
+            setSelectedTypes(prev =>
+              prev.includes(type.id)
+                ? prev.filter(t => t !== type.id)
+                : [...prev, type.id]
+            );
+          }}
+          className={`relative p-4 rounded-xl border-2 text-center transition-all ${
+  isSelected
+    ? 'border-teal-500 bg-teal-50'
+    : 'border-gray-200 hover:border-gray-300'
+}`}
+        >
+          <span className="text-3xl block mb-2">{type.icon}</span>
+          <span className="text-sm font-medium">{type.label}</span>
+          {isSelected && (
+            <span className="absolute top-2 right-2 text-teal-500">✓</span>
+          )}
+        </button>
+      );
+    })}
+  </div>
+</div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -1067,233 +869,24 @@ export default function CompleteProfile() {
             </div>
 
             {/* SECTION 4: SERVICES */}
-            <div className="pb-8 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">4. Services</h2>
-              <p className="text-gray-600 mb-6">Select the services you offer and customize pricing</p>
-              
-              <div className="space-y-4">
-                {/* Category Filter Tabs */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory('all')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${activeCategory === 'all' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                  >
-                    All Services
-                  </button>
-                  {serviceCategories.map(cat => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setActiveCategory(cat)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition ${activeCategory === cat ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+<div className="pb-8 border-b border-gray-200">
+  <h2 className="text-2xl font-bold text-gray-900 mb-2">4. Services</h2>
+  <p className="text-gray-600 mb-6">
+    Select services you offer and customize pricing. Add from templates or create custom services.
+  </p>
+  
+  <ServiceSelector
+    providerTypes={selectedTypes}
+    selectedServices={services}
+    onServicesChange={setServices}
+    mode="onboarding"
+  />
+  
+  {services.length === 0 && (
+    <p className="text-sm text-red-600 mt-2">Add at least one service to continue</p>
+  )}
+</div>
 
-                {/* Search */}
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                  placeholder="Search services..."
-                />
-
-                {/* Add Custom Service */}
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600">{selectedServices.length} services selected</p>
-                  {activeCategory !== 'all' && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAddCustomService(!showAddCustomService)}
-                      className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
-                    >
-                      {showAddCustomService ? 'Cancel' : '+ Create Custom Service'}
-                    </button>
-                  )}
-                </div>
-
-                {showAddCustomService && activeCategory !== 'all' && (
-                  <div className="p-4 bg-teal-50 border border-teal-200 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-3">Create a {activeCategory} Service</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                      <div className="md:col-span-2">
-                        <input
-                          type="text"
-                          value={customServiceName}
-                          onChange={(e) => setCustomServiceName(e.target.value)}
-                          placeholder="Service name *"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="number"
-                            value={customServiceDuration}
-                            onChange={(e) => setCustomServiceDuration(e.target.value)}
-                            placeholder="Duration *"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                          />
-                          <span className="text-sm text-gray-500">min</span>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm text-gray-500">$</span>
-                          <input
-                            type="number"
-                            value={customServicePrice}
-                            onChange={(e) => setCustomServicePrice(e.target.value)}
-                            placeholder="Price *"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-3">
-                      <textarea
-                        value={customServiceDescription}
-                        onChange={(e) => setCustomServiceDescription(e.target.value)}
-                        placeholder="Description (optional)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        rows={2}
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={addCustomService}
-                      className="mt-3 px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700"
-                    >
-                      Add Service
-                    </button>
-                  </div>
-                )}
-
-
-                {/* Services Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
-                  {getAllServicesWithCustom()
-                    .filter(s => {
-                      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                           s.category.toLowerCase().includes(searchQuery.toLowerCase());
-                      const matchesCategory = activeCategory === 'all' || s.category === activeCategory;
-                      return matchesSearch && matchesCategory;
-                    })
-                    .map(service => {
-                      const isSelected = selectedServices.includes(service.id);
-                      const details = getServiceDetails(service);
-                      const isEditing = editingService === service.id;
-
-                      return (
-                        <div
-                          key={service.id}
-                          className={`p-4 border-2 rounded-lg transition ${isSelected ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <button
-                              type="button"
-                              onClick={() => toggleService(service.id)}
-                              className="flex items-start gap-2 text-left flex-1"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                readOnly
-                                className="mt-1 w-4 h-4 text-teal-600 rounded"
-                              />
-                              <div>
-                                <h4 className="font-medium text-gray-900">{service.name}</h4>
-                                <span className="text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded">{service.category}</span>
-                              </div>
-                            </button>
-                            {isSelected && !isEditing && (
-                              <button
-                                type="button"
-                                onClick={() => startEdit(service.id)}
-                                className="p-1 text-gray-400 hover:text-teal-600 transition"
-                                title="Edit pricing"
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-
-                          {isEditing ? (
-                            <div className="mt-2 space-y-2 pl-6">
-                              <div className="flex gap-2 items-center">
-                                <input
-                                  type="number"
-                                  value={editDuration}
-                                  onChange={(e) => setEditDuration(e.target.value)}
-                                  placeholder="Duration"
-                                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
-                                />
-                                <span className="text-sm text-gray-600">min</span>
-                                <span className="text-gray-400">•</span>
-                                <span className="text-sm text-gray-600">$</span>
-                                <input
-                                  type="number"
-                                  value={editPrice}
-                                  onChange={(e) => setEditPrice(e.target.value)}
-                                  placeholder="Price"
-                                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
-                                />
-                              </div>
-                              <textarea
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                                placeholder="Description (optional)"
-                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
-                                rows={2}
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={saveEdit}
-                                  className="px-3 py-1 text-xs bg-teal-500 text-white rounded hover:bg-teal-600"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={cancelEdit}
-                                  className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => deleteService(service.id)}
-                                  className="px-3 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="pl-6">
-                              <p className={`text-sm ${details.isCustomized ? 'text-teal-600 font-medium' : 'text-gray-600'}`}>
-                                {details.duration} min • ${details.price}
-                                {details.isCustomized && <span className="text-xs ml-1">(edited)</span>}
-                              </p>
-                              {details.description && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                  {details.description.length > 60 ? details.description.substring(0, 60) + '...' : details.description}
-                                </p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-                {errors.services && <p className="text-sm text-red-600">{errors.services}</p>}
-              </div>
-            </div>
             {/* SECTION 5: OPTIONAL WITH TEAM */}
             <div className="pb-8 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">5. Optional Details</h2>

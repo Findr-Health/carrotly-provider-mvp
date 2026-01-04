@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, MapPin, Phone, Mail, Globe, AlertCircle } from 'lucide-react';
+import { ServiceSelector, ServiceList, ServiceEditor, Service } from '../components/services';
+import { PROVIDER_TYPES } from '../constants/providerTypes';
+
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -33,6 +36,9 @@ export default function EditProfile() {
   const [zip, setZip] = useState('');
   const [website, setWebsite] = useState('');
   const [errors, setErrors] = useState<any>({});
+  const [services, setServices] = useState<Service[]>(provider?.services || []);
+  const [editingService, setEditingService] = useState<{ service: Service; index: number } | null>(null);
+
 
   useEffect(() => {
     // Check if verified
