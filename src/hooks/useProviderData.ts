@@ -12,7 +12,7 @@ export const useProviderData = () => {
   const fetchProvider = async (providerId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/providers/${providerId}`);
+      const response = await fetch(API_URL + '/providers/' + providerId);
       if (!response.ok) {
         throw new Error('Failed to fetch provider');
       }
@@ -32,7 +32,6 @@ export const useProviderData = () => {
   useEffect(() => {
     const loadProvider = async () => {
       const providerId = localStorage.getItem('providerId');
-      
       if (providerId) {
         await fetchProvider(providerId);
       } else {
@@ -56,17 +55,15 @@ export const useProviderData = () => {
 
   const updateProvider = async (data: Partial<Provider>) => {
     const providerId = localStorage.getItem('providerId') || provider?._id;
-    
     if (!providerId) {
       const updated = { ...provider, ...data };
       setProvider(updated);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     }
-
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/providers/${providerId}`, {
+      const response = await fetch(API_URL + '/providers/' + providerId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -100,13 +97,5 @@ export const useProviderData = () => {
     localStorage.removeItem('providerId');
   };
 
-  return { 
-    provider, 
-    loading, 
-    error, 
-    updateProvider, 
-    refreshProvider,
-    clearProvider,
-    fetchProvider
-  };
+  return { provider, loading, error, updateProvider, refreshProvider, clearProvider, fetchProvider };
 };
