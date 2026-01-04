@@ -45,6 +45,7 @@ export default function EditProfile() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [successMessage, setSuccessMessage] = useState('');
+  const justSavedRef = React.useRef(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Form state
@@ -171,7 +172,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
   };
 
   const handleCancel = () => {
-    if (hasChanges && !successMessage) {
+    if (hasChanges && !successMessage && !justSavedRef.current) {
       if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
         navigate('/dashboard');
       }
@@ -227,6 +228,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
       if (result) {
         setSuccessMessage('Profile updated successfully!');
         setHasChanges(false);
+        justSavedRef.current = true;
         setTimeout(() => setSuccessMessage(''), 3000);
       }
     } catch (error) {
