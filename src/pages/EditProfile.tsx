@@ -172,14 +172,16 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
   };
 
   const handleCancel = () => {
-    if (hasChanges && !successMessage && !justSavedRef.current) {
-      if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-        navigate('/dashboard');
-      }
-    } else {
-      navigate('/dashboard');
-    }
-  };
+  if (successMessage) {
+    navigate(-1);
+    return;
+  }
+  if (hasChanges) {
+    setShowUnsavedDialog(true);
+  } else {
+    navigate(-1);
+  }
+};
 
   const handleSave = async () => {
     setSaving(true);
