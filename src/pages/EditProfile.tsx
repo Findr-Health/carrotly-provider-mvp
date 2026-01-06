@@ -47,6 +47,7 @@ export default function EditProfile() {
   const [successMessage, setSuccessMessage] = useState('');
   const justSavedRef = React.useRef(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   // Form state
   const [practiceName, setPracticeName] = useState('');
@@ -177,7 +178,9 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
     return;
   }
   if (hasChanges) {
-    setShowUnsavedDialog(true);
+    if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+      navigate(-1);
+    }
   } else {
     navigate(-1);
   }
