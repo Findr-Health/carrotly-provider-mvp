@@ -46,6 +46,7 @@ export default function EditProfile() {
   const [activeTab, setActiveTab] = useState('basic');
   const [successMessage, setSuccessMessage] = useState('');
   const justSavedRef = React.useRef(false);
+  const isLoadingRef = React.useRef(true);
   const [hasChanges, setHasChanges] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
@@ -120,6 +121,7 @@ export default function EditProfile() {
   // Load provider data
   useEffect(() => {
     if (provider) {
+      isLoadingRef.current = true;
       setPracticeName(provider.practiceName || '');
       setSelectedTypes(provider.providerTypes || []);
       setPhone(provider.contactInfo?.phone || provider.phone || '');
@@ -173,10 +175,23 @@ if (typeof policy === 'string') {
   setCancellationTier(policy.tier);
 }
 setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) : true);
+      
+      // Reset loading flag and handle post-save state
+      setTimeout(() => {
+        isLoadingRef.current = false;
+        if (justSavedRef.current) {
+          setHasChanges(false);
+          justSavedRef.current = false;
+        }
+      }, 0);
     }
   }, [provider]);
 
-  const markChanged = () => setHasChanges(true);
+  const markChanged = () => {
+    if (!isLoadingRef.current) {
+      setHasChanges(true);
+    }
+  };
 
   const toggleType = (typeId: string) => {
     setSelectedTypes(prev =>
