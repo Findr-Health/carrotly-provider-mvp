@@ -936,10 +936,10 @@ const cancelEditMember = () => {
               
               <Camera className="w-12 h-12 text-gray-400 mx-auto mb-3" />
               <p className="text-base font-medium text-gray-700 mb-1">
-                {photos.length >= 5 ? 'Maximum photos reached' : 'Click to upload photos'}
+                {photos.length >= 5 ? 'Maximum photos reached' : uploadingPhoto ? 'Uploading...' : 'Click to upload photos'}
               </p>
               <p className="text-sm text-gray-500">
-                JPG, PNG up to 5MB each
+                JPG, PNG up to 10MB each
               </p>
             </div>
 
