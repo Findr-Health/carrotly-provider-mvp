@@ -79,6 +79,7 @@ export default function EditProfile() {
 
   // Photos state
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   // Credentials state
   const [licenseNumber, setLicenseNumber] = useState('');
@@ -145,9 +146,23 @@ export default function EditProfile() {
       // Description
       setDescription(provider.description || '');
       
-      // Business Hours
+      // Business Hours - transform from backend format (isOpen/open/close) to frontend format (enabled/start/end)
       if (provider.calendar?.businessHours) {
-        setBusinessHours(provider.calendar.businessHours);
+        const backendHours = provider.calendar.businessHours;
+        const transformedHours: Record<string, any> = {};
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        days.forEach(day => {
+          if (backendHours[day]) {
+            transformedHours[day] = {
+              enabled: backendHours[day].isOpen ?? false,
+              start: backendHours[day].open || '09:00',
+              end: backendHours[day].close || '17:00'
+            };
+          } else {
+            transformedHours[day] = { enabled: false, start: '09:00', end: '17:00' };
+          }
+        });
+        setBusinessHours(transformedHours as typeof businessHours);
       }
       // Cancellation Policy
       // Cancellation Policy - backend stores as string, not object
