@@ -181,13 +181,14 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
         isLoadingRef.current = false;
         if (justSavedRef.current) {
           setHasChanges(false);
-          justSavedRef.current = false;
+          // justSavedRef reset moved to markChanged
         }
       }, 0);
     }
   }, [provider]);
 
   const markChanged = () => {
+    justSavedRef.current = false; // Reset on new user change
     if (!isLoadingRef.current) {
       setHasChanges(true);
     }
