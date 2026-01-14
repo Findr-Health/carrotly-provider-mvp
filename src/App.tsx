@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import Reviews from "./pages/Reviews";
 import Settings from "./pages/Settings";
 import ProviderLogin from './pages/ProviderLogin';
+import Payments from './pages/Payments';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/payments" element={<Payments />} />
         <Route path="/preview" element={<ProfilePreview />} />
         
         {/* Fallback */}
