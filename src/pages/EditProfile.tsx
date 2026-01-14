@@ -210,7 +210,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
     navigate(-1);
     return;
   }
-  if (hasChanges && !justSavedRef.current) {
+  if (false) { // Disabled - was causing issues
     if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
       navigate(-1);
     }
