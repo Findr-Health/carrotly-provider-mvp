@@ -443,6 +443,16 @@ export const Dashboard: React.FC = () => {
                 </div>
               </button>
 
+              <button onClick={() => navigate("/calendar")} className="w-full flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors text-left">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900">Calendar</p>
+                  <p className="text-xs text-gray-600">Sync availability</p>
+                </div>
+              </button>
+
               <button onClick={() => navigate("/settings")} className="w-full flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors text-left">
                 <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
                   <Settings className="w-5 h-5 text-gray-600" />

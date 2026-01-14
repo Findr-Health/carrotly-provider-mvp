@@ -14,6 +14,7 @@ import Reviews from "./pages/Reviews";
 import Settings from "./pages/Settings";
 import ProviderLogin from './pages/ProviderLogin';
 import Payments from './pages/Payments';
+import CalendarSettings from './pages/Calendar';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/payments" element={<Payments />} />
+        <Route path="/calendar" element={<CalendarSettings />} />
         <Route path="/preview" element={<ProfilePreview />} />
         
         {/* Fallback */}
