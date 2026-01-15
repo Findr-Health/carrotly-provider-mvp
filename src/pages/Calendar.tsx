@@ -42,6 +42,7 @@ export default function CalendarSettings() {
   }, []);
 
   const fetchStatus = async () => {
+    if (!provider?._id) return;
     try {
       setLoading(true);
       const res = await fetch(`${API_URL}/calendar/status/${provider._id}`);
