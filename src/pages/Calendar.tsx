@@ -22,7 +22,7 @@ export default function CalendarSettings() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (provider?._id) {
+    if (provider && provider._id) {
       fetchStatus();
     }
   }, [provider?._id]);
