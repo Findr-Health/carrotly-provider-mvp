@@ -20,6 +20,7 @@ export default function CalendarSettings() {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (provider && provider._id) {
@@ -33,8 +34,11 @@ export default function CalendarSettings() {
     const calendarStatus = params.get('calendar');
     
     if (calendarStatus === 'success') {
+      setSuccessMessage('Calendar connected successfully!');
       fetchStatus();
       window.history.replaceState({}, '', '/calendar');
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(''), 5000);
     } else if (calendarStatus === 'error') {
       setError(params.get('reason') || 'Failed to connect calendar');
       window.history.replaceState({}, '', '/calendar');
@@ -122,6 +126,13 @@ export default function CalendarSettings() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <p className="text-green-800 font-medium">{successMessage}</p>
+          </div>
+        )}
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-600" />
