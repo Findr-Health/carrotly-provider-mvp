@@ -1,3 +1,4 @@
+// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from "./pages/Landing";
 import SearchBusiness from './pages/onboarding/SearchBusiness';
@@ -16,7 +17,14 @@ import ProviderLogin from './pages/ProviderLogin';
 import Payments from './pages/Payments';
 import CalendarSettings from './pages/Calendar';
 
+// NEW: Booking management pages
+import PendingRequestsPage from './pages/PendingRequestsPage';
+import BookingsPage from './pages/BookingsPage';
+
 function App() {
+  // Get providerId from localStorage (set during login)
+  const providerId = localStorage.getItem('providerId') || '';
+
   return (
     <Router>
       <Routes>
@@ -41,6 +49,10 @@ function App() {
         <Route path="/payments" element={<Payments />} />
         <Route path="/calendar" element={<CalendarSettings />} />
         <Route path="/preview" element={<ProfilePreview />} />
+        
+        {/* NEW: Booking management routes */}
+        <Route path="/bookings" element={<BookingsPage providerId={providerId} />} />
+        <Route path="/bookings/pending" element={<PendingRequestsPage providerId={providerId} />} />
         
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
