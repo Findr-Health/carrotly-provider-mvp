@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Upload, X, Camera, Search, Pencil, AlertCircle, FileText, Users, Plus } from 'lucide-react';
+import { Check, Upload, X, Camera, Search, Pencil, AlertCircle, FileText, Users, Plus, Clock, Shield, CheckCircle, Zap, AlertTriangle } from 'lucide-react';
 import FindrLogo from '../../components/branding/FindrLogo';
 import { submitProviderProfile } from '../../services/api';
 // New imports for service components
@@ -112,6 +112,16 @@ export default function CompleteProfile() {
 
   const [errors, setErrors] = useState<any>({});
   const [loading, setLoading] = useState(false);
+
+  // Calendar Integration State
+  const [calendarStatus, setCalendarStatus] = useState<{connected: boolean; provider?: string; email?: string}>({ connected: false });
+  const [calendarConnecting, setCalendarConnecting] = useState<string | null>(null);
+  const [calendarError, setCalendarError] = useState<string | null>(null);
+  const [calendarSyncDirection, setCalendarSyncDirection] = useState('two-way');
+  const [calendarBufferMinutes, setCalendarBufferMinutes] = useState(15);
+  const [calendarSyncBusyOnly, setCalendarSyncBusyOnly] = useState(true);
+  const [showSkipWarning, setShowSkipWarning] = useState(false);
+
 
   useEffect(() => {
     const verified = sessionStorage.getItem('verified');
@@ -400,6 +410,93 @@ export default function CompleteProfile() {
       setLoading(false);
     }
   };
+
+  
+  // Calendar Integration Functions
+  const checkCalendarStatus = async () => {
+    const pid = localStorage.getItem('providerId');
+    if (!pid) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/calendar/status/${pid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCalendarStatus({
+          connected: data.connected || false,
+          provider: data.provider,
+          email: data.email || data.calendarEmail
+        });
+      }
+    } catch (err) {
+      console.error('Failed to check calendar status:', err);
+    }
+  };
+
+  const connectGoogleCalendar = async () => {
+    const pid = localStorage.getItem('providerId');
+    if (!pid) {
+      setCalendarError('Provider ID not found. Please refresh and try again.');
+      return;
+    }
+    
+    setCalendarConnecting('google');
+    setCalendarError(null);
+    
+    try {
+      const response = await fetch(`${API_URL}/calendar/google/auth/${pid}`);
+      const data = await response.json();
+      
+      if (data.authUrl) {
+        window.location.href = data.authUrl;
+      } else {
+        throw new Error('No auth URL returned');
+      }
+    } catch (err: any) {
+      setCalendarError(err.message || 'Failed to connect Google Calendar');
+      setCalendarConnecting(null);
+    }
+  };
+
+  const connectMicrosoftCalendar = async () => {
+    const pid = localStorage.getItem('providerId');
+    if (!pid) {
+      setCalendarError('Provider ID not found. Please refresh and try again.');
+      return;
+    }
+    
+    setCalendarConnecting('microsoft');
+    setCalendarError(null);
+    
+    try {
+      const response = await fetch(`${API_URL}/calendar/microsoft/auth/${pid}`);
+      const data = await response.json();
+      
+      if (data.error) throw new Error(data.error);
+      if (data.authUrl) {
+        window.location.href = data.authUrl;
+      } else {
+        throw new Error('No auth URL returned');
+      }
+    } catch (err: any) {
+      setCalendarError(err.message || 'Failed to connect Microsoft Calendar');
+      setCalendarConnecting(null);
+    }
+  };
+
+  const disconnectCalendar = async () => {
+    const pid = localStorage.getItem('providerId');
+    if (!pid || !window.confirm('Disconnect your calendar?')) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/calendar/disconnect/${pid}`, { method: 'POST' });
+      if (response.ok) {
+        setCalendarStatus({ connected: false });
+      }
+    } catch (err) {
+      setCalendarError('Failed to disconnect calendar');
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1355,9 +1452,253 @@ export default function CompleteProfile() {
               </div>
             </div>
 
-           {/* SECTION 7: CREATE PASSWORD */}
+            {/* SECTION 7: CALENDAR INTEGRATION */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8" id="calendar-section">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">7. Calendar Integration</h2>
+              <p className="text-gray-600 mb-6">
+                Connect your calendar to enable instant booking. Without a calendar, patients will need to request appointments that you manually approve.
+              </p>
+
+              {/* Booking Mode Explanation */}
+              <div className="bg-gradient-to-r from-blue-50 to-teal-50 border border-blue-200 rounded-xl p-5 mb-6">
+                <h3 className="font-semibold text-gray-900 mb-3">Why connect a calendar?</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3 bg-white/60 rounded-lg p-3">
+                    <CheckCircle className="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <span className="font-medium text-green-800">With Calendar</span>
+                      <p className="text-sm text-gray-600 mt-1">
+                        <strong>Instant Booking</strong> — Patients book directly into your available time slots
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 bg-white/60 rounded-lg p-3">
+                    <Clock className="w-6 h-6 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <span className="font-medium text-amber-800">Without Calendar</span>
+                      <p className="text-sm text-gray-600 mt-1">
+                        <strong>Request Booking</strong> — You manually approve each request within 24-48 hours
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefits Stats */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-semibold text-amber-900">Providers with calendars connected see:</p>
+                    <ul className="mt-2 space-y-1 text-amber-800">
+                      <li>• <strong>3x more bookings</strong> — patients prefer instant confirmation</li>
+                      <li>• <strong>Zero manual work</strong> — availability syncs automatically</li>
+                      <li>• <strong>No double-bookings</strong> — real-time conflict detection</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Calendar Status / Connect Buttons */}
+              {calendarStatus.connected ? (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-green-900">
+                          {calendarStatus.provider === 'google' ? 'Google Calendar' : 'Microsoft Outlook'} Connected
+                        </h3>
+                        <p className="text-green-700 text-sm">{calendarStatus.email}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={disconnectCalendar}
+                      disabled={calendarConnecting}
+                      className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50"
+                    >
+                      Disconnect
+                    </button>
+                  </div>
+
+                  {/* Sync Settings */}
+                  <div className="border-t border-green-200 pt-4 space-y-4">
+                    <h4 className="font-medium text-gray-900">Sync Settings</h4>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Sync Direction</label>
+                        <select
+                          value={calendarSyncDirection}
+                          onChange={(e) => setCalendarSyncDirection(e.target.value)}
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                        >
+                          <option value="two-way">Two-way sync (recommended)</option>
+                          <option value="one-way">One-way (calendar → Findr only)</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Buffer Between Appointments</label>
+                        <select
+                          value={calendarBufferMinutes}
+                          onChange={(e) => setCalendarBufferMinutes(parseInt(e.target.value))}
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                        >
+                          <option value="0">No buffer</option>
+                          <option value="5">5 minutes</option>
+                          <option value="10">10 minutes</option>
+                          <option value="15">15 minutes (recommended)</option>
+                          <option value="30">30 minutes</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={calendarSyncBusyOnly}
+                        onChange={(e) => setCalendarSyncBusyOnly(e.target.checked)}
+                        className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
+                      />
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Only sync busy times</span>
+                        <p className="text-xs text-gray-500">Hide event titles and details for privacy</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 mb-6">
+                  {calendarError && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      <span className="text-red-800">{calendarError}</span>
+                      <button onClick={() => setCalendarError(null)} className="ml-auto text-red-600 hover:text-red-800">×</button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={connectGoogleCalendar}
+                    disabled={calendarConnecting}
+                    className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-200 rounded-xl px-6 py-5 hover:border-teal-500 hover:bg-teal-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <svg className="w-7 h-7" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span className="font-medium text-gray-700 group-hover:text-teal-700">
+                      {calendarConnecting === 'google' ? 'Connecting...' : 'Connect Google Calendar'}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={connectMicrosoftCalendar}
+                    disabled={calendarConnecting}
+                    className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-200 rounded-xl px-6 py-5 hover:border-teal-500 hover:bg-teal-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <svg className="w-7 h-7" viewBox="0 0 23 23">
+                      <path fill="#f35325" d="M1 1h10v10H1z"/>
+                      <path fill="#81bc06" d="M12 1h10v10H12z"/>
+                      <path fill="#05a6f0" d="M1 12h10v10H1z"/>
+                      <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                    </svg>
+                    <span className="font-medium text-gray-700 group-hover:text-teal-700">
+                      {calendarConnecting === 'microsoft' ? 'Connecting...' : 'Connect Microsoft Outlook'}
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              {/* Privacy Note */}
+              <div className="bg-gray-50 rounded-xl p-4 flex items-start gap-3 mb-6">
+                <Shield className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium text-gray-900">Your privacy is protected:</span> We only check busy/free times. Event titles and details are never stored or shared.
+                </div>
+              </div>
+
+              {/* Skip Option - Demoted */}
+              {!calendarStatus.connected && (
+                <div className="border-t border-gray-200 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowSkipWarning(true)}
+                    className="text-sm text-gray-400 hover:text-gray-600 underline"
+                  >
+                    I'll set this up later from my dashboard
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Skip Warning Modal */}
+            {showSkipWarning && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertTriangle className="w-8 h-8 text-amber-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Skip Calendar Integration?</h3>
+                    <p className="text-gray-600">
+                      Without a calendar, your profile will use <strong>Request Booking</strong> mode.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4 mb-6 text-sm">
+                    <p className="font-medium text-gray-900 mb-2">This means:</p>
+                    <ul className="space-y-2 text-gray-600">
+                      <li className="flex items-start gap-2">
+                        <X className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <span>Patients must <strong>wait 24-48 hours</strong> for you to confirm</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <X className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <span>You'll manually approve <strong>every booking request</strong></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <X className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <span>Many patients <strong>prefer instant booking</strong> and may choose other providers</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowSkipWarning(false)}
+                      className="w-full py-3 bg-teal-600 text-white rounded-xl font-semibold hover:bg-teal-700 transition"
+                    >
+                      Go Back & Connect Calendar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowSkipWarning(false);
+                        document.getElementById('password-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="w-full py-3 text-gray-500 hover:text-gray-700 text-sm"
+                    >
+                      Continue without calendar — I understand
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
+
+           {/* SECTION 8: CREATE PASSWORD */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8" id="password-section">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">7. Create Password *</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">8. Create Password *</h2>
               <p className="text-gray-600 mb-6">Create a password to secure your account and access your dashboard.</p>
               <div className="space-y-4 max-w-md">
                 <div>
@@ -1399,7 +1740,7 @@ export default function CompleteProfile() {
 
             {/* SECTION 8: AGREEMENT */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8" id="agreement-section">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">8. Provider Agreement *</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">9. Provider Agreement *</h2>
               
               {/* Download & View Agreement Box */}
               <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-6">
