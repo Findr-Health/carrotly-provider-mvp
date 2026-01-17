@@ -157,32 +157,55 @@ export default function CompleteProfile() {
     );
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
     
     const filesToProcess = Array.from(files).slice(0, 5 - photos.length);
     
-    filesToProcess.forEach(file => {
+    setUploadingPhoto(true);
+    
+    for (const file of filesToProcess) {
       if (file.size > 5 * 1024 * 1024) {
         alert(`File ${file.name} is too large (max 5MB)`);
-        return;
+        continue;
       }
       if (!file.type.startsWith('image/')) {
         alert(`File ${file.name} is not an image`);
-        return;
+        continue;
       }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setPhotos(prev => {
-            if (prev.length >= 5) return prev;
-            return [...prev, e.target!.result as string];
-          });
+      
+      try {
+        // Upload to Cloudinary via backend
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const response = await fetch(API_URL + '/upload/image', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error('Upload failed');
         }
-      };
-      reader.readAsDataURL(file);
-    });
+        
+        const data = await response.json();
+        
+        // Store Cloudinary URL, not base64
+        setPhotos(prev => {
+          if (prev.length >= 5) return prev;
+          return [...prev, data.url];
+        });
+        
+      } catch (error) {
+        console.error('Photo upload error:', error);
+        alert(`Failed to upload ${file.name}`);
+      }
+    }
+    
+    setUploadingPhoto(false);
   };
 
   const removePhoto = (index: number) => {
@@ -943,7 +966,7 @@ export default function CompleteProfile() {
                     disabled={photos.length >= 5}
                   />
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-700 font-medium mb-1">Click to upload photos</p>
+                  <p className="text-gray-700 font-medium mb-1">{uploadingPhoto ? "Uploading..." : "Click to upload photos"}</p>
                   <p className="text-sm text-gray-500">{photos.length}/5 photos • Max 5MB each</p>
                 </div>
 
