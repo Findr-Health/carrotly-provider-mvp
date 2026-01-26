@@ -17,6 +17,14 @@ import ProviderLogin from './pages/ProviderLogin';
 import Payments from './pages/Payments';
 import CalendarSettings from './pages/Calendar';
 
+// NEW: Toast notifications
+import { Toaster } from 'react-hot-toast';
+
+// NEW: Navigation component
+import Navigation from './components/Navigation';
+
+// NEW: Appointments page
+import AppointmentsPage from './pages/appointments/AppointmentsPage';
 // NEW: Booking management pages
 import PendingRequestsPage from './pages/PendingRequestsPage';
 import BookingsPage from './pages/BookingsPage';
@@ -27,6 +35,8 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-right" />
+      <Navigation />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
@@ -48,6 +58,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/calendar" element={<CalendarSettings />} />
+        <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/preview" element={<ProfilePreview />} />
         
         {/* NEW: Booking management routes */}
