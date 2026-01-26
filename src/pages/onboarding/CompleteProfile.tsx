@@ -5,6 +5,7 @@ import FindrLogo from '../../components/branding/FindrLogo';
 import { submitProviderProfile } from '../../services/api';
 // New imports for service components
 import { ServiceSelector, ServiceList, Service } from '../../components/services';
+const API_URL = import.meta.env.VITE_API_URL || 'https://fearless-achievement-production.up.railway.app/api';
 import { PROVIDER_TYPES, normalizeProviderTypes } from '../../constants/providerTypes';
 
 
