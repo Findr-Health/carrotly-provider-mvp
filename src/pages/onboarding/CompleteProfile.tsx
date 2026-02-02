@@ -101,8 +101,6 @@ export default function CompleteProfile() {
   const [editMemberTitle, setEditMemberTitle] = useState('');
   const [editMemberBio, setEditMemberBio] = useState('');
   const [editMemberPhoto, setEditMemberPhoto] = useState('');
-  const [cancellationPolicy, setCancellationPolicy] = useState<'standard' | 'moderate'>('standard');
-  const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
 
   const [signature, setSignature] = useState('');
   const [password, setPassword] = useState('');
@@ -397,10 +395,6 @@ export default function CompleteProfile() {
           education
         },
         teamMembers,
-        cancellationPolicy: {
-          tier: cancellationPolicy,
-          allowFeeWaiver: allowFeeWaiver
-        },
         password,
         // No agreement data - will be signed later
         agreement: null
@@ -615,10 +609,6 @@ export default function CompleteProfile() {
         education
       },
       teamMembers,
-      cancellationPolicy: {
-        tier: cancellationPolicy,
-        allowFeeWaiver: allowFeeWaiver
-      },
       password,
       agreement: {
         signature,
