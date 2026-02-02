@@ -102,13 +102,20 @@ export const useBookingsStore = create<BookingsState>()(
       fetchBookings: async (providerId, status = 'pending', limit = 20, offset = 0) => {
         set({ loading: true, error: null });
         
+        // Map frontend status to backend status
+        const statusMap: Record<string, string> = {
+          'pending': 'pending_confirmation',
+          'upcoming': 'upcoming',
+          'past': 'past'
+        };
+        const backendStatus = statusMap[status] || status;
+        
         try {
           const response = await fetch(
-            `${API_URL}/bookings/provider/${providerId}?status=${status}&limit=${limit}&offset=${offset}`,
+            `${API_URL}/bookings/provider/${providerId}?status=${backendStatus}&limit=${limit}&offset=${offset}`,
             {
               headers: {
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               }
             }
           );
@@ -150,7 +157,6 @@ export const useBookingsStore = create<BookingsState>()(
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'x-provider-id': providerId,
                 'x-provider-id': providerId,
                 'Idempotency-Key': idempotencyKey
               },
@@ -194,7 +200,6 @@ export const useBookingsStore = create<BookingsState>()(
               headers: {
                 'Content-Type': 'application/json',
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               },
               body: JSON.stringify({ reason })
             }
@@ -234,7 +239,6 @@ export const useBookingsStore = create<BookingsState>()(
               headers: {
                 'Content-Type': 'application/json',
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               },
               body: JSON.stringify({ 
                 proposedTimes: times,
