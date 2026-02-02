@@ -46,6 +46,7 @@ export default function EditProfile() {
   const [activeTab, setActiveTab] = useState('basic');
   const [successMessage, setSuccessMessage] = useState('');
   const justSavedRef = React.useRef(false);
+  const lastSavedAt = React.useRef(0);
   const isLoadingRef = React.useRef(true);
   const [hasChanges, setHasChanges] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
@@ -179,7 +180,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
         isLoadingRef.current = false;
         if (justSavedRef.current) {
           setHasChanges(false);
-          justSavedRef.current = false;
+          // justSavedRef reset moved to markChanged
         }
       }, 0);
     }
@@ -187,6 +188,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
 
   const markChanged = () => {
     if (!isLoadingRef.current) {
+      justSavedRef.current = false; // Reset only on real user change
       setHasChanges(true);
     }
   };
@@ -201,11 +203,12 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
   };
 
   const handleCancel = () => {
-  if (successMessage) {
+  // Skip popup if saved within last 10 seconds
+  if (successMessage || (Date.now() - lastSavedAt.current < 10000)) {
     navigate(-1);
     return;
   }
-  if (hasChanges) {
+  if (false) { // Disabled - was causing issues
     if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
       navigate(-1);
     }
@@ -261,6 +264,7 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
         setSuccessMessage('Profile updated successfully!');
         setHasChanges(false);
         justSavedRef.current = true;
+        lastSavedAt.current = Date.now();
         setTimeout(() => setSuccessMessage(''), 3000);
       }
     } catch (error) {

@@ -1,3 +1,4 @@
+// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from "./pages/Landing";
 import SearchBusiness from './pages/onboarding/SearchBusiness';
@@ -13,10 +14,29 @@ import Analytics from "./pages/Analytics";
 import Reviews from "./pages/Reviews";
 import Settings from "./pages/Settings";
 import ProviderLogin from './pages/ProviderLogin';
+import Payments from './pages/Payments';
+import CalendarSettings from './pages/Calendar';
+
+// NEW: Toast notifications
+import { Toaster } from 'react-hot-toast';
+
+// NEW: Navigation component
+import Navigation from './components/Navigation';
+
+// NEW: Appointments page
+import AppointmentsPage from './pages/appointments/AppointmentsPage';
+// NEW: Booking management pages
+import PendingRequestsPage from './pages/PendingRequestsPage';
+import BookingsPage from './pages/BookingsPage';
 
 function App() {
+  // Get providerId from localStorage (set during login)
+  const providerId = localStorage.getItem('providerId') || '';
+
   return (
     <Router>
+      <Toaster position="top-right" />
+      <Navigation />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
@@ -36,7 +56,14 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/payments" element={<Payments />} />
+        <Route path="/calendar" element={<CalendarSettings />} />
+        <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/preview" element={<ProfilePreview />} />
+        
+        {/* NEW: Booking management routes */}
+        <Route path="/bookings" element={<BookingsPage providerId={providerId} />} />
+        <Route path="/bookings/pending" element={<PendingRequestsPage providerId={providerId} />} />
         
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
