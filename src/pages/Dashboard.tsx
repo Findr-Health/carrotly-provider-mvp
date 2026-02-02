@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProviderData } from '../hooks/useProviderData';
 import { Eye, Calendar, Star, DollarSign, Bell, User, Edit, Plus, MessageSquare, Settings, TrendingUp, LogOut, RefreshCw, BarChart3, FileText, AlertTriangle, X, Download } from 'lucide-react';
 import FindrLogo from '../components/branding/FindrLogo';
+// import PendingRequestsWidget from '../components/PendingRequestsWidget';
 
 interface StatsCardProps {
   icon: React.ComponentType<{ className?: string }>;
@@ -261,6 +262,8 @@ export const Dashboard: React.FC = () => {
               : 'Complete your profile to get started.'}
           </p>
         </div>
+
+        {/* Pending Booking Requests */}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

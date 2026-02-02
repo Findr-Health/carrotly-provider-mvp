@@ -107,8 +107,6 @@ export default function EditProfile() {
   });
 
   // Cancellation Policy state
-  const [cancellationTier, setCancellationTier] = useState<'standard' | 'moderate'>('standard');
-  const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
 
   // Security state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -252,7 +250,6 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
       calendar: {
         businessHours: transformedBusinessHours
       },
-      cancellationPolicy: cancellationTier
     };
     
     console.log('Saving data:', updateData);
@@ -1303,6 +1300,53 @@ const cancelEditMember = () => {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+        )}
+        {/* Policies Tab */}
+        {activeTab === 'policies' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4 flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Cancellation Policy
+                </h3>
+                <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-3">
+                  <p className="text-sm font-medium text-teal-900 mb-2">
+                    Standard 24-Hour Policy (All Providers)
+                  </p>
+                  <p className="text-sm text-teal-700 mb-3">
+                    All providers on Findr Health use our standard cancellation policy to ensure consistency for patients.
+                  </p>
+                  <ul className="space-y-1.5 text-sm text-gray-700">
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>24+ hours before: <strong className="text-green-600">Full refund</strong></span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>12-24 hours before: <strong className="text-yellow-600">75% refund</strong> (25% fee)</span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>Less than 12 hours: <strong className="text-orange-600">50% refund</strong> (50% fee)</span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>No-show: <strong className="text-red-600">Full charge</strong></span>
+                    </li>
+                  </ul>
+                </div>
+                <p className="text-xs text-gray-500">
+                  You retain the right to waive cancellation fees on a case-by-case basis for exceptional circumstances.
+                </p>
               </div>
             </div>
           </div>
