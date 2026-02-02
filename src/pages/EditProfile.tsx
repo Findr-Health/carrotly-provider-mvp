@@ -173,7 +173,6 @@ if (typeof policy === 'string') {
 } else if (policy?.tier) {
   setCancellationTier(policy.tier);
 }
-setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) : true);
       
       // Reset loading flag and handle post-save state
       setTimeout(() => {
@@ -1280,8 +1279,6 @@ const cancelEditMember = () => {
                 <label className="flex items-start cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={allowFeeWaiver}
-                    onChange={(e) => { setAllowFeeWaiver(e.target.checked); markChanged(); }}
                     className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
                   />
                   <div className="ml-3">

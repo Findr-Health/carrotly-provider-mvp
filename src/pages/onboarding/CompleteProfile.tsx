@@ -1437,8 +1437,6 @@ export default function CompleteProfile() {
                   <label className="flex items-start cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={allowFeeWaiver}
-                      onChange={(e) => setAllowFeeWaiver(e.target.checked)}
                       className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
                     />
                     <div className="ml-3">
