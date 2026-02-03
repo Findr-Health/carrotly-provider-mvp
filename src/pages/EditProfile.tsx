@@ -170,7 +170,6 @@ export default function EditProfile() {
 if (typeof policy === 'string') {
   setCancellationTier(policy as 'standard' | 'moderate');
 } else if (policy?.tier) {
-  setCancellationTier(policy.tier);
 }
       
       // Reset loading flag and handle post-save state
