@@ -49,9 +49,17 @@ export default function AppointmentsPage() {
   // Fetch bookings on mount and tab change
   useEffect(() => {
     if (providerId) {
+      // Always fetch fresh data when tab changes
       fetchBookings(providerId, activeTab);
     }
   }, [providerId, activeTab, fetchBookings]);
+  
+  // Force fresh fetch on component mount
+  useEffect(() => {
+    if (providerId) {
+      fetchBookings(providerId, 'pending');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
   // Connect WebSocket for real-time updates
   useEffect(() => {
