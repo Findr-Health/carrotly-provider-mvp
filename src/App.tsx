@@ -29,6 +29,17 @@ import AppointmentsPage from './pages/appointments/AppointmentsPage';
 import PendingRequestsPage from './pages/PendingRequestsPage';
 import BookingsPage from './pages/BookingsPage';
 
+
+function Layout() {
+  const location = useLocation();
+  const hideNavigation = location.pathname === '/' || 
+                         location.pathname.startsWith('/onboarding') ||
+                         location.pathname === '/login' ||
+                         location.pathname === '/complete';
+  
+  return !hideNavigation ? <Navigation /> : null;
+}
+
 function App() {
   // Get providerId from localStorage (set during login)
   const providerId = localStorage.getItem('providerId') || '';
