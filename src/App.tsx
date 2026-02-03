@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Landing from "./pages/Landing";
 import SearchBusiness from './pages/onboarding/SearchBusiness';
 import SearchResults from './pages/onboarding/SearchResults';
