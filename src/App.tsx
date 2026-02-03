@@ -36,7 +36,7 @@ function App() {
   return (
     <Router>
       <Toaster position="top-right" />
-      <Navigation />
+      <Layout />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
