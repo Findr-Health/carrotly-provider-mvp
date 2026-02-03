@@ -390,6 +390,36 @@ export const useBookingsStore = create<BookingsState>()(
           urgentCount: isBookingUrgent(booking) ? state.urgentCount + 1 : state.urgentCount
         }));
       },
+      
+      // Cancel booking (provider-initiated)
+      cancelBooking: async (bookingId: string, reason: string) => {
+        const providerId = localStorage.getItem("providerId");
+        if (!providerId) throw new Error("Provider not authenticated");
+        
+        const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel-provider`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-provider-id": providerId
+          },
+          body: JSON.stringify({ reason })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to cancel booking");
+        }
+        
+        const data = await response.json();
+        
+        set((state) => ({
+          bookings: state.bookings.map((b) =>
+            b._id === bookingId ? { ...b, status: "cancelled" } : b
+          )
+        }));
+        
+        return data;
+      }
     }),
     { name: 'bookings-store' }
   )
