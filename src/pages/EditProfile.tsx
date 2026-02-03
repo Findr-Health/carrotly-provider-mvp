@@ -167,11 +167,6 @@ export default function EditProfile() {
       }
       // Cancellation Policy
       // Cancellation Policy - backend stores as string, not object
-if (typeof policy === 'string') {
-  setCancellationTier(policy as 'standard' | 'moderate');
-} else if (policy?.tier) {
-}
-      
       // Reset loading flag and handle post-save state
       setTimeout(() => {
         isLoadingRef.current = false;
