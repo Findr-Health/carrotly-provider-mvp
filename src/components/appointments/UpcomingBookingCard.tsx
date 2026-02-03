@@ -2,7 +2,10 @@
  * Upcoming Booking Card Component
  * Display confirmed upcoming appointments
  */
+import { useState } from 'react';
 import { Calendar, Clock, User, Mail, Phone, DollarSign } from 'lucide-react';
+import { useBookingsStore } from '../../store/bookingsStore';
+import CancelModal from './CancelModal';
 import { formatInTimeZone } from 'date-fns-tz';
 
 interface Booking {
@@ -33,7 +36,14 @@ interface UpcomingBookingCardProps {
 }
 
 export default function UpcomingBookingCard({ booking, past = false }: UpcomingBookingCardProps) {
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const { cancelBooking } = useBookingsStore();
   const timezone = booking.providerTimezone || 'America/Los_Angeles';
+  
+  const handleCancel = async (reason: string) => {
+    await cancelBooking(booking._id, reason);
+    setShowCancelModal(false);
+  };
   
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
@@ -135,7 +145,10 @@ export default function UpcomingBookingCard({ booking, past = false }: UpcomingB
           <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
             Reschedule
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+          <button 
+            onClick={() => setShowCancelModal(true)}
+            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+          >
             Cancel
           </button>
           <button className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
@@ -143,6 +156,14 @@ export default function UpcomingBookingCard({ booking, past = false }: UpcomingB
           </button>
         </div>
       )}
+      
+      {/* Cancel Modal */}
+      <CancelModal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onConfirm={handleCancel}
+        booking={booking}
+      />
     </div>
   );
 }

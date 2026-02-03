@@ -67,6 +67,7 @@ interface BookingsState {
   confirmBooking: (bookingId: string, note?: string) => Promise<void>;
   declineBooking: (bookingId: string, reason: string) => Promise<void>;
   suggestTimes: (bookingId: string, times: Array<{start: string, end: string}>, message: string) => Promise<void>;
+  cancelBooking: (bookingId: string, reason: string) => Promise<any>;
   
   // Real-time
   connectWebSocket: (providerId: string) => void;
@@ -229,6 +230,7 @@ export const useBookingsStore = create<BookingsState>()(
       
       // Suggest alternative times
       suggestTimes: async (bookingId, times, message) => {
+  cancelBooking: (bookingId: string, reason: string) => Promise<any>;
         const providerId = localStorage.getItem('providerId');
         set({ actionLoading: bookingId });
         
@@ -387,7 +389,7 @@ export const useBookingsStore = create<BookingsState>()(
           pendingCount: state.pendingCount + 1,
           urgentCount: isBookingUrgent(booking) ? state.urgentCount + 1 : state.urgentCount
         }));
-      }
+      },
     }),
     { name: 'bookings-store' }
   )
