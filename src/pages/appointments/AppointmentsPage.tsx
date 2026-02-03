@@ -183,15 +183,15 @@ export default function AppointmentsPage() {
           {/* Tab Content */}
           <div className="p-6">          
           {/* Calendar Integration Notice */}
-          {metadata?.calendarIntegrated && pendingCount === 0 && activeTab === 'pending' && (
+          {pendingCount === 0 && activeTab === 'pending' && !loading && (
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center">
                 <Calendar className="w-5 h-5 text-blue-600 mr-3" />
                 <div>
-                  <p className="text-sm font-medium text-blue-900">Calendar Integration Active</p>
+                  <p className="text-sm font-medium text-blue-900">No Pending Requests</p>
                   <p className="text-xs text-blue-700 mt-1">
-                    Bookings are automatically confirmed based on your calendar availability. 
-                    You won't see pending requests here.
+                    Bookings with calendar integration are automatically confirmed. 
+                    Manual confirmation requests will appear here.
                   </p>
                 </div>
               </div>
