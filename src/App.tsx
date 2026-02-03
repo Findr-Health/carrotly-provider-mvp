@@ -53,6 +53,7 @@ function App() {
         <Route path="/login" element={<ProviderLogin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/profile" element={<EditProfile />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />

@@ -100,7 +100,8 @@ export const useBookingsStore = create<BookingsState>()(
       
       // Fetch bookings
       fetchBookings: async (providerId, status = 'pending', limit = 20, offset = 0) => {
-        set({ loading: true, error: null });
+        // Clear existing bookings to force fresh data
+        set({ bookings: [], loading: true, error: null });
         
         // Map frontend status to backend status
         const statusMap: Record<string, string> = {
