@@ -135,16 +135,16 @@ export default function ProviderLogin() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(API_URL + '/providers');
+      // Demo: load Muscle First provider directly
+      const response = await fetch(API_URL + '/providers/69b5d6ab77c6be2da9bdb59a');
       
       if (!response.ok) {
         throw new Error('API request failed');
       }
       
-      const providers = await response.json();
+      const provider = await response.json();
       
-      if (providers && providers.length > 0) {
-        const provider = providers[0];
+      if (provider && provider._id) {
         localStorage.setItem('providerId', provider._id);
         const essentialData = {
           _id: provider._id,
@@ -154,6 +154,7 @@ export default function ProviderLogin() {
           address: provider.address
         };
         localStorage.setItem('providerData', JSON.stringify(essentialData));
+        localStorage.setItem('findr_provider', JSON.stringify(provider));
         navigate('/dashboard');
       } else {
         setError('No providers found. Please complete onboarding first.');
