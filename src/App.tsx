@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Landing from "./pages/Landing";
 import SearchBusiness from './pages/onboarding/SearchBusiness';
 import SearchResults from './pages/onboarding/SearchResults';
@@ -29,6 +29,17 @@ import AppointmentsPage from './pages/appointments/AppointmentsPage';
 import PendingRequestsPage from './pages/PendingRequestsPage';
 import BookingsPage from './pages/BookingsPage';
 
+
+function Layout() {
+  const location = useLocation();
+  const hideNavigation = location.pathname === '/' || 
+                         location.pathname.startsWith('/onboarding') ||
+                         location.pathname === '/login' ||
+                         location.pathname === '/complete';
+  
+  return !hideNavigation ? <Navigation /> : null;
+}
+
 function App() {
   // Get providerId from localStorage (set during login)
   const providerId = localStorage.getItem('providerId') || '';
@@ -36,7 +47,7 @@ function App() {
   return (
     <Router>
       <Toaster position="top-right" />
-      <Navigation />
+      <Layout />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
@@ -53,6 +64,7 @@ function App() {
         <Route path="/login" element={<ProviderLogin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/profile" element={<EditProfile />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />

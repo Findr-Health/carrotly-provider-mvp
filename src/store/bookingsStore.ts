@@ -67,6 +67,7 @@ interface BookingsState {
   confirmBooking: (bookingId: string, note?: string) => Promise<void>;
   declineBooking: (bookingId: string, reason: string) => Promise<void>;
   suggestTimes: (bookingId: string, times: Array<{start: string, end: string}>, message: string) => Promise<void>;
+  cancelBooking: (bookingId: string, reason: string) => Promise<any>;
   
   // Real-time
   connectWebSocket: (providerId: string) => void;
@@ -100,15 +101,23 @@ export const useBookingsStore = create<BookingsState>()(
       
       // Fetch bookings
       fetchBookings: async (providerId, status = 'pending', limit = 20, offset = 0) => {
-        set({ loading: true, error: null });
+        // Clear existing bookings to force fresh data
+        set({ bookings: [], loading: true, error: null });
+        
+        // Map frontend status to backend status
+        const statusMap: Record<string, string> = {
+          'pending': 'pending_confirmation',
+          'upcoming': 'upcoming',
+          'past': 'past'
+        };
+        const backendStatus = statusMap[status] || status;
         
         try {
           const response = await fetch(
-            `${API_URL}/bookings/provider/${providerId}?status=${status}&limit=${limit}&offset=${offset}`,
+            `${API_URL}/bookings/provider/${providerId}?status=${backendStatus}&limit=${limit}&offset=${offset}`,
             {
               headers: {
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               }
             }
           );
@@ -150,7 +159,6 @@ export const useBookingsStore = create<BookingsState>()(
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'x-provider-id': providerId,
                 'x-provider-id': providerId,
                 'Idempotency-Key': idempotencyKey
               },
@@ -194,7 +202,6 @@ export const useBookingsStore = create<BookingsState>()(
               headers: {
                 'Content-Type': 'application/json',
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               },
               body: JSON.stringify({ reason })
             }
@@ -223,6 +230,7 @@ export const useBookingsStore = create<BookingsState>()(
       
       // Suggest alternative times
       suggestTimes: async (bookingId, times, message) => {
+  cancelBooking: (bookingId: string, reason: string) => Promise<any>;
         const providerId = localStorage.getItem('providerId');
         set({ actionLoading: bookingId });
         
@@ -234,7 +242,6 @@ export const useBookingsStore = create<BookingsState>()(
               headers: {
                 'Content-Type': 'application/json',
                 'x-provider-id': providerId,
-                'x-provider-id': providerId
               },
               body: JSON.stringify({ 
                 proposedTimes: times,
@@ -382,6 +389,36 @@ export const useBookingsStore = create<BookingsState>()(
           pendingCount: state.pendingCount + 1,
           urgentCount: isBookingUrgent(booking) ? state.urgentCount + 1 : state.urgentCount
         }));
+      },
+      
+      // Cancel booking (provider-initiated)
+      cancelBooking: async (bookingId: string, reason: string) => {
+        const providerId = localStorage.getItem("providerId");
+        if (!providerId) throw new Error("Provider not authenticated");
+        
+        const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel-provider`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-provider-id": providerId
+          },
+          body: JSON.stringify({ reason })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to cancel booking");
+        }
+        
+        const data = await response.json();
+        
+        set((state) => ({
+          bookings: state.bookings.map((b) =>
+            b._id === bookingId ? { ...b, status: "cancelled_provider" } : b
+          )
+        }));
+        
+        return data;
       }
     }),
     { name: 'bookings-store' }

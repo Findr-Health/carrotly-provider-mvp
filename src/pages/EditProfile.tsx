@@ -108,8 +108,6 @@ export default function EditProfile() {
   });
 
   // Cancellation Policy state
-  const [cancellationTier, setCancellationTier] = useState<'standard' | 'moderate'>('standard');
-  const [allowFeeWaiver, setAllowFeeWaiver] = useState(true);
 
   // Security state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -169,14 +167,6 @@ export default function EditProfile() {
       }
       // Cancellation Policy
       // Cancellation Policy - backend stores as string, not object
-const policy = provider.cancellationPolicy;
-if (typeof policy === 'string') {
-  setCancellationTier(policy as 'standard' | 'moderate');
-} else if (policy?.tier) {
-  setCancellationTier(policy.tier);
-}
-setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) : true);
-      
       // Reset loading flag and handle post-save state
       setTimeout(() => {
         isLoadingRef.current = false;
@@ -255,7 +245,6 @@ setAllowFeeWaiver(typeof policy === 'object' ? (policy?.allowFeeWaiver ?? true) 
       calendar: {
         businessHours: transformedBusinessHours
       },
-      cancellationPolicy: cancellationTier
     };
     
     console.log('Saving data:', updateData);
@@ -1206,96 +1195,6 @@ const cancelEditMember = () => {
             <p className="text-gray-600 mb-6">Choose the policy that applies to all bookings at your practice.</p>
             
             <div className="space-y-4">
-              {/* Standard Policy */}
-              <label
-                className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  cancellationTier === 'standard'
-                    ? 'border-teal-500 bg-teal-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-start">
-                  <input
-                    type="radio"
-                    name="cancellationPolicy"
-                    value="standard"
-                    checked={cancellationTier === 'standard'}
-                    onChange={() => { setCancellationTier('standard'); markChanged(); }}
-                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
-                  />
-                  <div className="ml-3 flex-1">
-                    <div className="flex items-center">
-                      <span className="font-semibold text-gray-900">Standard</span>
-                      <span className="ml-2 px-2 py-0.5 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">
-                        Recommended
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Patients can cancel free of charge up to 24 hours before their appointment.
-                    </p>
-                    <ul className="mt-3 space-y-1 text-sm text-gray-500">
-                      <li>• 24+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
-                      <li>• 12-24 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
-                      <li>• Under 12 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
-                      <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
-                    </ul>
-                  </div>
-                </div>
-              </label>
-
-              {/* Moderate Policy */}
-              <label
-                className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  cancellationTier === 'moderate'
-                    ? 'border-teal-500 bg-teal-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-start">
-                  <input
-                    type="radio"
-                    name="cancellationPolicy"
-                    value="moderate"
-                    checked={cancellationTier === 'moderate'}
-                    onChange={() => { setCancellationTier('moderate'); markChanged(); }}
-                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500"
-                  />
-                  <div className="ml-3 flex-1">
-                    <div className="flex items-center">
-                      <span className="font-semibold text-gray-900">Moderate</span>
-                      <span className="ml-2 text-xs text-gray-500">Best for specialists & procedures</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Patients can cancel free of charge up to 48 hours before their appointment.
-                    </p>
-                    <ul className="mt-3 space-y-1 text-sm text-gray-500">
-                      <li>• 48+ hours notice: <span className="text-green-600 font-medium">Full refund</span></li>
-                      <li>• 24-48 hours notice: <span className="text-yellow-600 font-medium">25% fee</span></li>
-                      <li>• Under 24 hours: <span className="text-orange-600 font-medium">50% fee</span></li>
-                      <li>• No-show: <span className="text-red-600 font-medium">Full charge</span></li>
-                    </ul>
-                  </div>
-                </div>
-              </label>
-
-              {/* Fee Waiver Option */}
-              <div className="border-t pt-4 mt-4">
-                <label className="flex items-start cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={allowFeeWaiver}
-                    onChange={(e) => { setAllowFeeWaiver(e.target.checked); markChanged(); }}
-                    className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 rounded"
-                  />
-                  <div className="ml-3">
-                    <span className="font-medium text-gray-900">Allow fee waivers</span>
-                    <p className="text-sm text-gray-500">
-                      You can waive cancellation fees on a case-by-case basis from your dashboard.
-                    </p>
-                  </div>
-                </label>
-              </div>
-
               {/* Info Box */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
                 <div className="flex">
@@ -1307,6 +1206,53 @@ const cancelEditMember = () => {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+        )}
+        {/* Policies Tab */}
+        {activeTab === 'policies' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4 flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Cancellation Policy
+                </h3>
+                <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-3">
+                  <p className="text-sm font-medium text-teal-900 mb-2">
+                    Standard 24-Hour Policy (All Providers)
+                  </p>
+                  <p className="text-sm text-teal-700 mb-3">
+                    All providers on Findr Health use our standard cancellation policy to ensure consistency for patients.
+                  </p>
+                  <ul className="space-y-1.5 text-sm text-gray-700">
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>24+ hours before: <strong className="text-green-600">Full refund</strong></span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>12-24 hours before: <strong className="text-yellow-600">75% refund</strong> (25% fee)</span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>Less than 12 hours: <strong className="text-orange-600">50% refund</strong> (50% fee)</span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      <span>No-show: <strong className="text-red-600">Full charge</strong></span>
+                    </li>
+                  </ul>
+                </div>
+                <p className="text-xs text-gray-500">
+                  You retain the right to waive cancellation fees on a case-by-case basis for exceptional circumstances.
+                </p>
               </div>
             </div>
           </div>

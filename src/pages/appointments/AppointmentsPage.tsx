@@ -49,9 +49,17 @@ export default function AppointmentsPage() {
   // Fetch bookings on mount and tab change
   useEffect(() => {
     if (providerId) {
+      // Always fetch fresh data when tab changes
       fetchBookings(providerId, activeTab);
     }
   }, [providerId, activeTab, fetchBookings]);
+  
+  // Force fresh fetch on component mount
+  useEffect(() => {
+    if (providerId) {
+      fetchBookings(providerId, 'pending');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
   // Connect WebSocket for real-time updates
   useEffect(() => {
@@ -181,7 +189,22 @@ export default function AppointmentsPage() {
           </div>
           
           {/* Tab Content */}
-          <div className="p-6">
+          <div className="p-6">          
+          {/* Calendar Integration Notice */}
+          {pendingCount === 0 && activeTab === 'pending' && !loading && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900">No Pending Requests</p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    Bookings with calendar integration are automatically confirmed. 
+                    Manual confirmation requests will appear here.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
             {loading && bookings.length === 0 ? (
               <LoadingState />
             ) : error ? (
