@@ -166,14 +166,32 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
           const msgs: Message[] = Array.isArray(msgData) ? msgData : (msgData.messages || []);
           if (msgs.length === 0) return null; // Filter out empty conversations
 
-          // Try to get enrollment data for context
+          // Fetch patient name from users endpoint
+          let patientName = 'Member';
           let enrollment: any = null;
           try {
-            const enrRes = await fetch(
-              `${API_URL}/enrollments?providerId=${providerId}&patientId=${c.patientId}`
+            const userRes = await fetch(
+              `${API_URL}/messaging/users/${c.patientId}`,
+              { headers: getAuthHeaders() }
             );
-            const enrData = await enrRes.json();
-            enrollment = Array.isArray(enrData) ? enrData[0] : enrData;
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              if (userData.firstName) {
+                patientName = `${userData.firstName} ${userData.lastName || ''}`.trim();
+              }
+            }
+          } catch {}
+
+          // Try enrollment for program context
+          try {
+            const enrRes = await fetch(
+              `${API_URL}/messaging/enrollments?providerId=${providerId}&patientId=${c.patientId}`,
+              { headers: getAuthHeaders() }
+            );
+            if (enrRes.ok) {
+              const enrData = await enrRes.json();
+              enrollment = Array.isArray(enrData) ? enrData[0] : enrData;
+            }
           } catch {}
 
           const now = new Date();
@@ -182,7 +200,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
 
           return {
             ...c,
-            patientName: enrollment?.memberName || c.patientName || 'Member',
+            patientName,
             programWeek: enrollment?.programWeek,
             daysSinceCheckIn: lastCheckIn ? Math.round((now.getTime() - lastCheckIn.getTime()) / 86400000) : undefined,
             renewalDaysOut: renewal ? Math.round((renewal.getTime() - now.getTime()) / 86400000) : undefined,
