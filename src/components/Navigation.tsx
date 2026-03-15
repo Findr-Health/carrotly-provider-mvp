@@ -41,7 +41,7 @@ export default function Navigation() {
               <NavLink
                 to="/messages"
                 icon={Calendar}
-                label="Appointments"
+                label="Messages"
                 isActive={isActive('/messages')}
                 badge={showBadge ? pendingCount : undefined}
                 badgeUrgent={urgentCount > 0}
@@ -114,7 +114,7 @@ export default function Navigation() {
           <MobileNavLink 
             to="/messages" 
             icon={Calendar} 
-            label="Appointments" 
+            label="Messages" 
             isActive={isActive('/messages')}
             badge={showBadge ? pendingCount : undefined}
             badgeUrgent={urgentCount > 0}
