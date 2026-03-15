@@ -8,6 +8,7 @@ import CompleteProfile from './pages/onboarding/CompleteProfile';
 import ContactAdmin from './pages/onboarding/ContactAdmin';
 import Complete from './pages/Complete';
 import { Dashboard } from './pages/Dashboard';
+import MessagesPage from './pages/MessagesPage';
 import { ProfilePreview } from './pages/ProfilePreview';
 import EditProfile from "./pages/EditProfile";
 import Analytics from "./pages/Analytics";
@@ -63,6 +64,7 @@ function App() {
         {/* Provider portal */}
         <Route path="/login" element={<ProviderLogin />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/messages" element={<MessagesPage providerId={localStorage.getItem('providerId') || ''} />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/profile" element={<EditProfile />} />
         <Route path="/analytics" element={<Analytics />} />

@@ -4,7 +4,7 @@
  */
 
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, User, Home, Calendar, FileText, Settings } from 'lucide-react';
+import { Bell, User, Home, Calendar, FileText, Settings } , MessageSquare } from 'lucide-react';
 import { useBookingsStore } from '../store/bookingsStore';
 import { useProviderData } from '../hooks/useProviderData';
 import FindrLogo from './branding/FindrLogo';
@@ -39,10 +39,10 @@ export default function Navigation() {
               />
               
               <NavLink
-                to="/appointments"
+                to="/messages"
                 icon={Calendar}
                 label="Appointments"
-                isActive={isActive('/appointments')}
+                isActive={isActive('/messages')}
                 badge={showBadge ? pendingCount : undefined}
                 badgeUrgent={urgentCount > 0}
               />
@@ -112,10 +112,10 @@ export default function Navigation() {
         <div className="flex justify-around py-2">
           <MobileNavLink to="/dashboard" icon={Home} label="Home" isActive={isActive('/dashboard')} />
           <MobileNavLink 
-            to="/appointments" 
+            to="/messages" 
             icon={Calendar} 
             label="Appointments" 
-            isActive={isActive('/appointments')}
+            isActive={isActive('/messages')}
             badge={showBadge ? pendingCount : undefined}
             badgeUrgent={urgentCount > 0}
           />
