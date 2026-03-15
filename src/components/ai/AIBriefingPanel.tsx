@@ -281,11 +281,42 @@ export const AIBriefingPanel: React.FC<AIBriefingPanelProps> = ({
   }, [providerId]);
 
   const handleSend = async (card: BriefingCard, message: string) => {
-    // For message-type cards, POST to messaging endpoint
-    // For invoice-type, would trigger invoice send
-    // For demo, just log — real send integrates with messaging backend
-    console.log('[Briefing] Sending:', card.type, 'to', card.memberName, '—', message.substring(0, 50) + '...');
-    await new Promise(r => setTimeout(r, 800)); // simulate network
+    // Find or create conversation for this member, then send message
+    try {
+      // First find the conversation
+      const convoRes = await fetch(`${API_URL}/messaging/conversations?providerId=${providerId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const convos = await convoRes.json();
+      
+      // Find conversation for this member by name
+      const convo = Array.isArray(convos) ? convos.find((c: any) => {
+        const memberName = c.memberName || c.patientName || '';
+        return memberName.toLowerCase().includes(card.memberName.split(' ')[0].toLowerCase());
+      }) : null;
+
+      const conversationId = convo?._id || convo?.conversationId;
+
+      if (conversationId) {
+        await fetch(`${API_URL}/messaging/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conversationId,
+            body: message,
+            senderRole: 'provider',
+            senderId: providerId,
+          })
+        });
+      } else {
+        // Fallback — log if no conversation found
+        console.log('[Briefing] No conversation found for', card.memberName);
+        await new Promise(r => setTimeout(r, 800));
+      }
+    } catch (err) {
+      console.error('[Briefing] Send error:', err);
+      await new Promise(r => setTimeout(r, 800));
+    }
   };
 
   const handleDismiss = (id: string) => {
