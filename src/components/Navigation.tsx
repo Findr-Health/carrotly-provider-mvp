@@ -4,7 +4,7 @@
  */
 
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, User, Home, Calendar, FileText, Settings } , MessageSquare } from 'lucide-react';
+import { Bell, User, Home, Calendar, FileText, Settings, MessageSquare } from 'lucide-react';
 import { useBookingsStore } from '../store/bookingsStore';
 import { useProviderData } from '../hooks/useProviderData';
 import FindrLogo from './branding/FindrLogo';
