@@ -159,7 +159,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
         try {
           // Get last message for preview
           const msgRes = await fetch(
-            `${API_URL}/messaging/messages?conversationId=${c._id}&limit=1`,
+            `${API_URL}/messaging/messages/${c._id}?limit=1`,
             { headers: getAuthHeaders() }
           );
           const msgData = await msgRes.json();
@@ -219,7 +219,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
 
   const fetchMessages = useCallback(async (convoId: string) => {
     try {
-      const res = await fetch(`${API_URL}/messaging/messages?conversationId=${convoId}`, { headers: getAuthHeaders() });
+      const res = await fetch(`${API_URL}/messaging/messages/${convoId}`, { headers: getAuthHeaders() });
       const data = await res.json();
       const msgs: Message[] = Array.isArray(data) ? data : (data.messages || []);
       setMessages(msgs);
