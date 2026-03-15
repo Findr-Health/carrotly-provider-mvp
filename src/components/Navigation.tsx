@@ -69,10 +69,10 @@ export default function Navigation() {
             {!hasCalendarIntegration && (
               <div 
                 className="hidden sm:flex items-center text-xs text-gray-500"
-                title={connected ? 'Real-time updates active' : 'Connecting...'}
+                title={connected ? 'Real-time updates active' : ''}
               >
-                <div className={`w-2 h-2 rounded-full mr-2 ${connected ? 'bg-green-500' : 'bg-gray-300 animate-pulse'}`} />
-                <span>{connected ? 'Live' : 'Connecting...'}</span>
+                <div className={`w-2 h-2 rounded-full mr-2 ${connected ? 'bg-green-500' : 'hidden'}`} />
+                <span>{connected ? 'Live' : ''}</span>
               </div>
             )}
             
