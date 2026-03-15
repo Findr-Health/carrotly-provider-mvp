@@ -155,6 +155,16 @@ export default function ProviderLogin() {
         };
         localStorage.setItem('providerData', JSON.stringify(essentialData));
         localStorage.setItem('findr_provider', JSON.stringify(provider));
+        // Get a real token for the demo provider
+        const tokenRes = await fetch(API_URL + '/providers/demo-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ providerId: provider._id })
+        });
+        if (tokenRes.ok) {
+          const tokenData = await tokenRes.json();
+          if (tokenData.token) localStorage.setItem('providerToken', tokenData.token);
+        }
         navigate('/dashboard');
       } else {
         setError('No providers found. Please complete onboarding first.');

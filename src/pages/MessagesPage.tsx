@@ -5,6 +5,14 @@ import { Send, Sparkles, ChevronLeft, AlertTriangle, Clock } from 'lucide-react'
 const API_URL = import.meta.env.VITE_API_URL ||
   'https://fearless-achievement-production.up.railway.app/api';
 
+function getAuthHeaders(): HeadersInit {
+  const token = localStorage.getItem('providerToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Message {
@@ -142,7 +150,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
 
   const fetchConvos = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/messaging/conversations?providerId=${providerId}`);
+      const res = await fetch(`${API_URL}/messaging/conversations?providerId=${providerId}`, { headers: getAuthHeaders() });
       const data = await res.json();
       const list: Conversation[] = Array.isArray(data) ? data : (data.conversations || []);
 
@@ -151,7 +159,8 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
         try {
           // Get last message for preview
           const msgRes = await fetch(
-            `${API_URL}/messaging/messages?conversationId=${c._id}&limit=1`
+            `${API_URL}/messaging/messages?conversationId=${c._id}&limit=1`,
+            { headers: getAuthHeaders() }
           );
           const msgData = await msgRes.json();
           const msgs: Message[] = Array.isArray(msgData) ? msgData : (msgData.messages || []);
@@ -210,7 +219,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ providerId }) => {
 
   const fetchMessages = useCallback(async (convoId: string) => {
     try {
-      const res = await fetch(`${API_URL}/messaging/messages?conversationId=${convoId}`);
+      const res = await fetch(`${API_URL}/messaging/messages?conversationId=${convoId}`, { headers: getAuthHeaders() });
       const data = await res.json();
       const msgs: Message[] = Array.isArray(data) ? data : (data.messages || []);
       setMessages(msgs);
